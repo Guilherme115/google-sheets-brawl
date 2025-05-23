@@ -2,7 +2,6 @@ package brawl.example.project_brawl_api_sheets.service;
 
 import brawl.example.project_brawl_api_sheets.model.BrawlRequestMODEL;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,9 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.web.client.RestTemplate;
 @Slf4j
@@ -24,6 +25,10 @@ public class BrawlService {
     private final RestTemplate restTemplate;
     @Value("${brawl.api.key}")
     private String apiToken;
+    List<String> modos3x3 = Arrays.asList(
+            "brawlBall", "gemGrab", "bounty", "heist",
+            "hotZone", "knockout", "siege", "wipeout"
+    );
 
     @Autowired
     public BrawlService(RestTemplate restTemplate, ObjectMapper mapper) {
@@ -66,10 +71,7 @@ public class BrawlService {
         }
     }
     private List<BrawlRequestMODEL.BattleLogInfo> filter3x3(List<BrawlRequestMODEL.BattleLogInfo> items) {
-        List<String> modos3x3 = Arrays.asList(
-                "brawlBall", "gemGrab", "bounty", "heist",
-                "hotZone", "knockout", "siege", "wipeout"
-        );
+
 
         return items.stream()
                 .filter(item -> {
@@ -101,7 +103,7 @@ public class BrawlService {
     }
 
 
-    private List<BrawlRequestMODEL.BattleLogInfo> filterByBattleLogType(List<BrawlRequestMODEL.BattleLogInfo> items) {
+    private List<BrawlRequestMODEL.BattleLogInfo> filterByBattleLogTypeFriendly(List<BrawlRequestMODEL.BattleLogInfo> items) {
         return items.stream()
                 .filter(item -> {
                     if (item == null || item.getBattle() == null) {
@@ -126,13 +128,32 @@ public class BrawlService {
             return Collections.emptyList();
         }
 
-        return filterByBattleLogType(model.getItems());
+        return filterByBattleLogTypeFriendly(model.getItems());
     }
 
+    private List<BrawlRequestMODEL.BattleLogInfo> getFilteredBattleLogs(String playerTag, Predicate<BrawlRequestMODEL.BattleLogInfo> filter) {
+        String rawJson = fetchRawJson(playerTag);
+        BrawlRequestMODEL model = parseJson(rawJson);
 
+        if (model == null || model.getItems() == null) {
+            log.warn("Modelo nulo ou sem items");
+            return Collections.emptyList();
+        }
 
+        return model.getItems().stream().filter(filter).collect(Collectors.toList());
     }
 
+    public Stream<BrawlRequestMODEL.BattleLogInfo> stream3x3Matches(List<BrawlRequestMODEL.BattleLogInfo> items) {
+        return items.stream()
+                .filter(item -> item != null && item.getBattle() != null && modos3x3.contains(item.getBattle().getType()));
+    }
+
+    public Stream<BrawlRequestMODEL.BattleLogInfo> streamFriendlyMatches(List<BrawlRequestMODEL.BattleLogInfo> items) {
+        return items.stream()
+                .filter(item -> item != null && item.getBattle() != null && "friendly".equalsIgnoreCase(item.getBattle().getType()));
+    }
+    private List<>
+}
 
 
 
