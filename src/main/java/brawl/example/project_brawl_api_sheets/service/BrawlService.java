@@ -10,21 +10,22 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.springframework.web.client.RestTemplate;
+
 @Slf4j
 @Service
 public class BrawlService {
     private final ObjectMapper mapper;
     private final RestTemplate restTemplate;
+
     @Value("${brawl.api.key}")
     private String apiToken;
+
     List<String> modos3x3 = Arrays.asList(
             "brawlBall", "gemGrab", "bounty", "heist",
             "hotZone", "knockout", "siege", "wipeout"
@@ -44,9 +45,41 @@ public class BrawlService {
         String url = "https://api.brawlstars.com/v1/players/%23" + mainTag + "/battlelog";
         URI uri = URI.create(url);
 
-        ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
+        return restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
+    }
 
-        return response;
+    public Stream<BrawlRequestMODEL.BattleLogInfo> getTeams(List<String> tags, List<BrawlRequestMODEL.BattleLogInfo> items) {
+        Map<String, BrawlRequestMODEL.BattleLogInfo> partidaMap = new HashMap<>();
+        Map<String, Set<String>> jogadoresPorPartida = new HashMap<>();
+
+        for (String tag : tags) {
+            List<BrawlRequestMODEL.BattleLogInfo> partidas = getFilteredBattleLogs(tag, is3v3AndFriendlyMatch());
+
+            for (BrawlRequestMODEL.BattleLogInfo partida : partidas) {
+                String idPartida = partida.getBattleTime() + "-" + partida.getBattle().getId();
+
+                List<BrawlRequestMODEL.Player> jogadores = partida.getBattle()
+                        .getTeams()
+                        .getPlayersList();
+
+                boolean jogadorParticipou = jogadores.stream()
+                        .anyMatch(j -> tags.contains(j.getTag().replace("#", "")));
+
+                if (jogadorParticipou) {
+                    jogadoresPorPartida.computeIfAbsent(idPartida, k -> new HashSet<>()).add(tag);
+                    partidaMap.putIfAbsent(idPartida, partida);
+                }
+            }
+        }
+
+        return jogadoresPorPartida.entrySet().stream()
+                .filter(entry -> {
+                    int count = entry.getValue().size();
+                    return count >= 2 && count <= 4;
+                })
+                .map(entry -> partidaMap.get(entry.getKey()))
+                .collect(Collectors.toList())
+                .stream();
     }
 
     private String fetchRawJson(String mainTag) {
@@ -59,6 +92,7 @@ public class BrawlService {
 
         return response.getBody();
     }
+
     private BrawlRequestMODEL parseJson(String json) {
         try {
             BrawlRequestMODEL model = mapper.readValue(json, BrawlRequestMODEL.class);
@@ -70,96 +104,40 @@ public class BrawlService {
             throw new RuntimeException("Erro ao desserializar JSON", e);
         }
     }
-    private List<BrawlRequestMODEL.BattleLogInfo> filter3x3(List<BrawlRequestMODEL.BattleLogInfo> items) {
 
+    private List<BrawlRequestMODEL.BattleLogInfo> getFilteredBattleLogs(
+            String playerTag,
+            Predicate<BrawlRequestMODEL.BattleLogInfo>... filters) {
 
-        return items.stream()
-                .filter(item -> {
-                    if (item == null || item.getBattle() == null) {
-                        log.warn("Item nulo ou sem informação de batalha");
-                        return false;
-                    }
-                    boolean matches = modos3x3.contains(item.getBattle().getType());
-                    if (matches) {
-                        log.info("Match encontrado para modo: {}", item.getBattle().getType());
-                    }
-                    return matches;
-                })
+        String rawJson = fetchRawJson(playerTag);
+        BrawlRequestMODEL model = parseJson(rawJson);
+
+        if (model == null || model.getItems() == null) {
+            log.warn("Modelo nulo ou sem items");
+            return Collections.emptyList();
+        }
+
+        Predicate<BrawlRequestMODEL.BattleLogInfo> combined = Arrays.stream(filters)
+                .reduce(x -> true, Predicate::and);
+
+        return model.getItems().stream()
+                .filter(combined)
                 .collect(Collectors.toList());
     }
 
-
-
-    private List<BrawlRequestMODEL.BattleLogInfo> get3v3BattleLogs(String playerTag) {
-        String rawJson = fetchRawJson(playerTag);
-        BrawlRequestMODEL model = parseJson(rawJson);
-
-        if (model == null || model.getItems() == null) {
-            log.warn("Modelo nulo ou sem items");
-            return Collections.emptyList();
-        }
-
-        return filter3x3(model.getItems());
+    public Predicate<BrawlRequestMODEL.BattleLogInfo> is3v3Match() {
+        return item -> item != null &&
+                item.getBattle() != null &&
+                modos3x3.contains(item.getBattle().getType());
     }
 
-
-    private List<BrawlRequestMODEL.BattleLogInfo> filterByBattleLogTypeFriendly(List<BrawlRequestMODEL.BattleLogInfo> items) {
-        return items.stream()
-                .filter(item -> {
-                    if (item == null || item.getBattle() == null) {
-                        log.warn("Item nulo ou sem informação de batalha");
-                        return false;
-                    }
-                    boolean matches = "friendly".contains(item.getBattle().getType());
-                    if (matches) {
-                        log.info("Match encontrado para modo: {}", item.getBattle().getType());
-                    }
-                    return matches;
-                })
-                .collect(Collectors.toList());
+    public Predicate<BrawlRequestMODEL.BattleLogInfo> isFriendlyMatch() {
+        return item -> item != null &&
+                item.getBattle() != null &&
+                "friendly".equalsIgnoreCase(item.getBattle().getType());
     }
 
-    private List<BrawlRequestMODEL.BattleLogInfo> getMatchesFriendely(String playerTag) {
-        String rawJson = fetchRawJson(playerTag);
-        BrawlRequestMODEL model = parseJson(rawJson);
-
-        if (model == null || model.getItems() == null) {
-            log.warn("Modelo nulo ou sem items");
-            return Collections.emptyList();
-        }
-
-        return filterByBattleLogTypeFriendly(model.getItems());
+    public Predicate<BrawlRequestMODEL.BattleLogInfo> is3v3AndFriendlyMatch() {
+        return is3v3Match().and(isFriendlyMatch());
     }
-
-    private List<BrawlRequestMODEL.BattleLogInfo> getFilteredBattleLogs(String playerTag, Predicate<BrawlRequestMODEL.BattleLogInfo> filter) {
-        String rawJson = fetchRawJson(playerTag);
-        BrawlRequestMODEL model = parseJson(rawJson);
-
-        if (model == null || model.getItems() == null) {
-            log.warn("Modelo nulo ou sem items");
-            return Collections.emptyList();
-        }
-
-        return model.getItems().stream().filter(filter).collect(Collectors.toList());
-    }
-
-    public Stream<BrawlRequestMODEL.BattleLogInfo> stream3x3Matches(List<BrawlRequestMODEL.BattleLogInfo> items) {
-        return items.stream()
-                .filter(item -> item != null && item.getBattle() != null && modos3x3.contains(item.getBattle().getType()));
-    }
-
-    public Stream<BrawlRequestMODEL.BattleLogInfo> streamFriendlyMatches(List<BrawlRequestMODEL.BattleLogInfo> items) {
-        return items.stream()
-                .filter(item -> item != null && item.getBattle() != null && "friendly".equalsIgnoreCase(item.getBattle().getType()));
-    }
-    private List<>
 }
-
-
-
-
-
-
-
-
-

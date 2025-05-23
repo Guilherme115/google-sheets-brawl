@@ -13,7 +13,8 @@ public class BrawlRequestMODEL {
     @Data
     @NoArgsConstructor
     public static class BattleLogInfo {
-        String battleTime;
+        private String battleTime;
+
         private Battle battle;
         private Brawler brawler;
 
@@ -23,10 +24,17 @@ public class BrawlRequestMODEL {
     @NoArgsConstructor
     public static class Battle {
         private String mode;
+        private String id;
         private String type;
         private String result;
         private int duration;
-        private List<Player> players;
+        private Teams teams;
+    }
+
+    @Data
+    @NoArgsConstructor
+    public static class Teams {
+        List<Player> playersList;
     }
 
     @Data
@@ -34,7 +42,7 @@ public class BrawlRequestMODEL {
     public static class Player {
         private String tag;
         private String name;
-        private List<Brawler> brawlers;
+        private Brawler brawlers;
     }
 
     @Data
