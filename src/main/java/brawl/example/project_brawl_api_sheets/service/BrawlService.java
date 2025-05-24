@@ -31,7 +31,7 @@ public class BrawlService {
             "hotZone", "knockout", "siege", "wipeout"
     );
 
-    @Autowired
+@Autowired
     public BrawlService(RestTemplate restTemplate, ObjectMapper mapper) {
         this.restTemplate = restTemplate;
         this.mapper = mapper;
