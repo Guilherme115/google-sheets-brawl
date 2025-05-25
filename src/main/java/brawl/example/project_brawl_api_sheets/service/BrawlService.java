@@ -37,6 +37,47 @@ public class BrawlService {
         this.mapper = mapper;
     }
 
+    public Map<String, List<BrawlRequestMODEL.BattleLogInfo>> getTeams(String mainTag, HashMap<List<String>, String> tags) {
+
+        Map<String, List<BrawlRequestMODEL.BattleLogInfo>> objectReturn = new HashMap<>();
+
+        Optional<List<String>> listaDoTime = tags.keySet().stream()
+                .filter(lista -> lista.contains(mainTag))
+                .findFirst();
+
+        if (listaDoTime.isPresent()) {
+            List<String> listaTags = listaDoTime.get();
+
+            String nomeEquipe = tags.get(listaTags);
+
+            List<BrawlRequestMODEL.BattleLogInfo> partidas = getFilteredBattleLogs(mainTag, is3v3AndFriendlyMatchAndContainsAllPlayer(listaTags));
+
+            objectReturn.put(nomeEquipe, partidas);
+        } else {
+            log.error("Não foi possível encontrar a equipe para a tag principal '{}'. Verifique a lógica de negócio.", mainTag);
+        }
+
+        return objectReturn;
+    }
+
+    private List<BrawlRequestMODEL.BattleLogInfo> getFilteredBattleLogs(String playerTag, Predicate<BrawlRequestMODEL.BattleLogInfo>... filters) {
+
+        String rawJson = fetchRawJson(playerTag);
+        BrawlRequestMODEL model = parseJson(rawJson);
+
+        if (model == null || model.getItems() == null) {
+            log.warn("Modelo nulo ou sem items");
+            return Collections.emptyList();
+        }
+
+        Predicate<BrawlRequestMODEL.BattleLogInfo> combined = Arrays.stream(filters)
+                .reduce(x -> true, Predicate::and);
+
+        return model.getItems().stream()
+                .filter(combined)
+                .collect(Collectors.toList());
+    }
+
     private ResponseEntity<String> fetchBattleLogFromApi(String mainTag) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + apiToken);
@@ -46,40 +87,6 @@ public class BrawlService {
         URI uri = URI.create(url);
 
         return restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
-    }
-
-    public Stream<BrawlRequestMODEL.BattleLogInfo> getTeams(List<String> tags, List<BrawlRequestMODEL.BattleLogInfo> items) {
-        Map<String, BrawlRequestMODEL.BattleLogInfo> partidaMap = new HashMap<>();
-        Map<String, Set<String>> jogadoresPorPartida = new HashMap<>();
-
-        for (String tag : tags) {
-            List<BrawlRequestMODEL.BattleLogInfo> partidas = getFilteredBattleLogs(tag, is3v3AndFriendlyMatch());
-
-            for (BrawlRequestMODEL.BattleLogInfo partida : partidas) {
-                String idPartida = partida.getBattleTime() + "-" + partida.getBattle().getId();
-
-                List<BrawlRequestMODEL.Player> jogadores = partida.getBattle()
-                        .getTeams()
-                        .getPlayersList();
-
-                boolean jogadorParticipou = jogadores.stream()
-                        .anyMatch(j -> tags.contains(j.getTag().replace("#", "")));
-
-                if (jogadorParticipou) {
-                    jogadoresPorPartida.computeIfAbsent(idPartida, k -> new HashSet<>()).add(tag);
-                    partidaMap.putIfAbsent(idPartida, partida);
-                }
-            }
-        }
-
-        return jogadoresPorPartida.entrySet().stream()
-                .filter(entry -> {
-                    int count = entry.getValue().size();
-                    return count >= 2 && count <= 4;
-                })
-                .map(entry -> partidaMap.get(entry.getKey()))
-                .collect(Collectors.toList())
-                .stream();
     }
 
     private String fetchRawJson(String mainTag) {
@@ -105,39 +112,32 @@ public class BrawlService {
         }
     }
 
-    private List<BrawlRequestMODEL.BattleLogInfo> getFilteredBattleLogs(
-            String playerTag,
-            Predicate<BrawlRequestMODEL.BattleLogInfo>... filters) {
-
-        String rawJson = fetchRawJson(playerTag);
-        BrawlRequestMODEL model = parseJson(rawJson);
-
-        if (model == null || model.getItems() == null) {
-            log.warn("Modelo nulo ou sem items");
-            return Collections.emptyList();
-        }
-
-        Predicate<BrawlRequestMODEL.BattleLogInfo> combined = Arrays.stream(filters)
-                .reduce(x -> true, Predicate::and);
-
-        return model.getItems().stream()
-                .filter(combined)
-                .collect(Collectors.toList());
-    }
-
-    public Predicate<BrawlRequestMODEL.BattleLogInfo> is3v3Match() {
+    private Predicate<BrawlRequestMODEL.BattleLogInfo> is3v3Match() {
         return item -> item != null &&
                 item.getBattle() != null &&
                 modos3x3.contains(item.getBattle().getType());
     }
 
-    public Predicate<BrawlRequestMODEL.BattleLogInfo> isFriendlyMatch() {
+    private Predicate<BrawlRequestMODEL.BattleLogInfo> isFriendlyMatch() {
         return item -> item != null &&
                 item.getBattle() != null &&
                 "friendly".equalsIgnoreCase(item.getBattle().getType());
     }
 
-    public Predicate<BrawlRequestMODEL.BattleLogInfo> is3v3AndFriendlyMatch() {
-        return is3v3Match().and(isFriendlyMatch());
+    private Predicate<BrawlRequestMODEL.BattleLogInfo> is3v3AndFriendlyMatchAndContainsAllPlayer(List<String> tags) {
+        return is3v3Match().and(isFriendlyMatch().and(isTeamPresent(tags)));
+    }
+
+    private Predicate<BrawlRequestMODEL.BattleLogInfo> isTeamPresent(List<String> tags) {
+        return player -> {
+            List<String> playerTags = player.getBattle()
+                    .getTeams()
+                    .getPlayersList()
+                    .stream()
+                    .map(p -> p.getTag().replace("#", "")) // remove o # se necessário
+                    .collect(Collectors.toList());
+
+            return playerTags.containsAll(tags);
+        };
     }
 }
