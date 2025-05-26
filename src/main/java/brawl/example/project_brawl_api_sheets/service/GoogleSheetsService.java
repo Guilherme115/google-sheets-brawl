@@ -7,11 +7,13 @@ import com.google.api.services.sheets.v4.model.ValueRange;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 import java.io.IOException;
-
+@Service
 public class GoogleSheetsService {
 
     private final Sheets sheets;
@@ -59,13 +61,11 @@ public class GoogleSheetsService {
             String tag4 = getCell(linha, 3);
             String teamName = getCell(linha, 4);
 
-            // Validação dos obrigatórios
             if (tag1.isBlank() || tag2.isBlank() || teamName.isBlank()) {
                 statusColuna.add(List.of(" Erro: TAG1, TAG2 e NOME são obrigatórios"));
                 continue;
             }
 
-            // Adiciona tags válidas
             tagsPlayer.add(tag1);
             tagsPlayer.add(tag2);
             if (!tag3.isBlank()) tagsPlayer.add(tag3);
@@ -91,26 +91,22 @@ public class GoogleSheetsService {
         return tagOfTeam;
     }
 
+    public List<String> mainTag() throws IOException {
+        String range = "BATTLES!B2:B";
 
-    public void salvarTagsDoGoogleSheets(Map<List<String>, String> mapaTags) {
-        for (Map.Entry<List<String>, String> entry : mapaTags.entrySet()) {
-            List<String> tags = entry.getKey();
-            String teamName = entry.getValue();
+        ValueRange response = sheets.spreadsheets().values()
+                .get(getSpreadsheetId(), range)
+                .execute();
+        List<List<Object>> linhas = response.getValues();
+        List<String> tagsPlayer = new ArrayList<>();
 
-            PlayerTagEntity entity = new PlayerTagEntity();
-            entity.setName(teamName);
-            entity.setTagsList(tags);
+        for (int i = 0; i < linhas.size(); i++) {
+            List<Object> linha = linhas.get(i);
+            String mainTag = getCell(linha, 0);
+            tagsPlayer.add(mainTag);
 
-            if (!repository.existsByTags(entity.getTags())) {
-                repository.save(entity);
-            } else {
-                System.out.println("🔁 Já existe no banco: " + entity.getTags());
-            }
         }
-    }
-
-    public List<PlayerTagEntity> listarTodos() {
-        return repository.findAll();
+        return tagsPlayer;
     }
 }
 

@@ -7,14 +7,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BrawlRequestMODEL {
     @JsonProperty("items")
-    List<BattleLogInfo> items;
+    private List<BattleLogInfo> items;
 
 
     @Data
     @NoArgsConstructor
     public static class BattleLogInfo {
         private String battleTime;
-
         private Battle battle;
         private Brawler brawler;
 

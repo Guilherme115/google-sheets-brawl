@@ -9,23 +9,20 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@Data
+
 @Entity
+@Data
 @NoArgsConstructor
+
 public class PlayerTagEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String name;
-    private String tags; // Armazena tags como "tag1,tag2,tag3"
+    private String id;
 
-    // Getter que transforma a string em lista
-    public List<String> getTagsList() {
-        return tags != null ? List.of(tags.split(",")) : List.of();
-    }
 
-    public void setTagsList(List<String> tagsList) {
-        this.tags = String.join(",", tagsList);
-    }
+
+    private String DiscordID;
+    private String TeamName;
+    private List<String> tags;
+
 }
 

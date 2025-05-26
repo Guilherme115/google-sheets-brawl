@@ -134,7 +134,7 @@ public class BrawlService {
                     .getTeams()
                     .getPlayersList()
                     .stream()
-                    .map(p -> p.getTag().replace("#", "")) // remove o # se necessário
+                    .map(p -> p.getTag().replace("#", ""))
                     .collect(Collectors.toList());
 
             return playerTags.containsAll(tags);
