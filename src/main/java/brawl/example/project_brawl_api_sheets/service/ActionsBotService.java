@@ -36,31 +36,37 @@ public class ActionsBotService {
                 return "Please insert to quantity of tags";
 
             case "TAG_QUANTITY":
+                System.out.println("Mensagem recebida: '" + mensageReceived + "'");
 
+                String cleanInput = mensageReceived.trim();
+
+                if (cleanInput.isEmpty()) {
+                    return "You must insert a number, not nothing 🤦‍♂️ mensage received :" +" -> " + cleanInput;
+                }
                 try {
-                    Integer quantityTags = Integer.valueOf(mensageReceived);
-                    if (quantityTags <= 0 || quantityTags > 4 ) return "Quantity of tags invalid";
-                     quantityTagsMap.put(userID, quantityTags);
-                     flowState.put(userID,UserState.TAG_INPUT);
-
-                     return "Please insert TAG of PLAYER #1";
-
-                }catch (NumberFormatException e ) {
-
+                    Integer quantityTags = Integer.valueOf(mensageReceived.trim());
+                    System.out.println(quantityTags);
+                    if (quantityTags <= 0 || quantityTags > 4) {
+                        return "Quantity of tags invalid";
+                    }
+                    quantityTagsMap.put(userID, quantityTags);
+                    flowState.put(userID, UserState.TAG_INPUT);
+                    return "Please insert TAG of PLAYER #1";
+                } catch (NumberFormatException e) {
                     return "Please insert valid Number";
                 }
 
-            case "TAG_INPUT" :
-                try {
-                    List<String> listTags = tagsReceive.get(userID);
-                    listTags.add(String.valueOf(mensageReceived));
-                    Integer quantity = quantityTagsMap.get(userID);
-                    if (quantity > listTags.size()) return "Very nice, insert Player tag number # " + (listTags.size() + 1) + "";
+            case "TAG_INPUT":
+                List<String> listTags = tagsReceive.computeIfAbsent(userID, k -> new ArrayList<>());
+                listTags.add(mensageReceived);
 
-                    return "Thank you for contributing";
+                int quantity = quantityTagsMap.getOrDefault(userID, 0);
 
-                }catch (IllegalStateException e) {
-                    return  "Registered tags SUCCESSFUL";
+                if (listTags.size() < quantity) {
+                    return "Very nice, insert Player tag number # " + (listTags.size() + 1);
+                } else {
+                    flowState.put(userID, UserState.FINISHED); // muda estado se quiser
+                    return "Thank you for contributing. All tags registered!";
                 }
 
             case "FINISHED" :
