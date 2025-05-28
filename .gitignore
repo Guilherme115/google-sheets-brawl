@@ -4,6 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 src/main/resources/planar-alliance-460322-s9-b4ef8b49b442.json
+src/main/resources/application.properties
 
 
 
