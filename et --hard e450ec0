@@ -1,0 +1,33 @@
+[33m33d313d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;32mbot-discord-isolado[m[33m)[m HEAD@{0}: reset: moving to HEAD~1
+[33me450ec0[m[33m ([m[1;32mbot-discord-clean[m[33m)[m HEAD@{1}: checkout: moving from main to main
+[33me450ec0[m[33m ([m[1;32mbot-discord-clean[m[33m)[m HEAD@{2}: reset: moving to HEAD
+[33me450ec0[m[33m ([m[1;32mbot-discord-clean[m[33m)[m HEAD@{3}: checkout: moving from main to main
+[33me450ec0[m[33m ([m[1;32mbot-discord-clean[m[33m)[m HEAD@{4}: reset: moving to HEAD
+[33me450ec0[m[33m ([m[1;32mbot-discord-clean[m[33m)[m HEAD@{5}: checkout: moving from bot-discord-clean to main
+[33me450ec0[m[33m ([m[1;32mbot-discord-clean[m[33m)[m HEAD@{6}: checkout: moving from bot-discord-clean to bot-discord-clean
+[33me450ec0[m[33m ([m[1;32mbot-discord-clean[m[33m)[m HEAD@{7}: checkout: moving from main to bot-discord-clean
+[33me450ec0[m[33m ([m[1;32mbot-discord-clean[m[33m)[m HEAD@{8}: checkout: moving from bot-discord-isolado to main
+[33m33d313d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;32mbot-discord-isolado[m[33m)[m HEAD@{9}: checkout: moving from main to bot-discord-isolado
+[33me450ec0[m[33m ([m[1;32mbot-discord-clean[m[33m)[m HEAD@{10}: checkout: moving from bot-discord-isolado to main
+[33m33d313d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;32mbot-discord-isolado[m[33m)[m HEAD@{11}: checkout: moving from main to bot-discord-isolado
+[33me450ec0[m[33m ([m[1;32mbot-discord-clean[m[33m)[m HEAD@{12}: commit: Uptade discord BOT, principally -Save Mongo, -Player Tag Entit and Bot Controller
+[33m33d313d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;32mbot-discord-isolado[m[33m)[m HEAD@{13}: checkout: moving from bot-discord-isolado to main
+[33m33d313d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;32mbot-discord-isolado[m[33m)[m HEAD@{14}: checkout: moving from main to bot-discord-isolado
+[33m33d313d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;32mbot-discord-isolado[m[33m)[m HEAD@{15}: commit: I added a Bot to Discord to get better to get the players tags
+[33m04510af[m HEAD@{16}: commit: I chose not to use JPA Repository and opt for MongoDB for ease, it was able to manipulate the data in the context of the application
+[33mcc29c9b[m HEAD@{17}: commit: I left the class more organized and probably finished the version that filters the matches I want
+[33m9a8757f[m HEAD@{18}: commit: Some dependencies had to be arranged, as the version was incompatible
+[33m4124b51[m HEAD@{19}: commit: Implemeted method that Seeks on Google Sheets
+[33m769084c[m HEAD@{20}: reset: moving to HEAD
+[33m769084c[m HEAD@{21}: commit: Atualizado a versão do Spring e Adicionei a bilioteca do Google sheets
+[33m765e444[m HEAD@{22}: commit: Filtro de tags afim de considerar um conjunto de 2 a 4 tags como uma equipe
+[33me0a7837[m HEAD@{23}: commit: Funcionalidades de filtros foram adicionados - StreamFriendelyMathes and Stream3x3Matches (Boolean filters)
+[33mf75512b[m HEAD@{24}: commit: Refatora filtros da BrawlService e melhora legibilidade
+[33m0b09768[m HEAD@{25}: commit (amend): beta
+[33m4b9ba3b[m HEAD@{26}: Branch: renamed refs/heads/main to refs/heads/main
+[33m4b9ba3b[m HEAD@{28}: Branch: renamed refs/heads/temp_branch to refs/heads/main
+[33m4b9ba3b[m HEAD@{30}: commit (initial): Commit inicial, limpinho
+[33m5fee7ad[m HEAD@{31}: Branch: renamed refs/heads/main to refs/heads/main
+[33m5fee7ad[m HEAD@{33}: commit: Atualiza .gitignore e remove arquivo confidencial do controle do Git
+[33m82141ca[m HEAD@{34}: Branch: renamed refs/heads/master to refs/heads/main
+[33m82141ca[m HEAD@{36}: commit (initial): Climbing model mode
