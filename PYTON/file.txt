@@ -1,0 +1,3 @@
+1 - I go need to guarantee that the MongoDB really its guarding the data
+2 - Before in method SyncService, i gonna create sync to BrawlService e BotService
+3 - Before i also to guarantee
