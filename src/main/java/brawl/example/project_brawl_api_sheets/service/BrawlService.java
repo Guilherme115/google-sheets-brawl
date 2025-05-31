@@ -1,6 +1,8 @@
 package brawl.example.project_brawl_api_sheets.service;
 
+import brawl.example.project_brawl_api_sheets.dto.TeamBattleDTO;
 import brawl.example.project_brawl_api_sheets.model.BrawlRequestMODEL;
+import brawl.example.project_brawl_api_sheets.model.TeamMODEL;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.*;
@@ -30,11 +32,19 @@ public class BrawlService {
      */
     private final RestTemplate restTemplate;
 
+
+    @Autowired
+    private TeamMODEL model;
+    /*
+    chave key em resouces
+     */
+
     @Value("${brawl.api.key}")
     private String apiToken;
     /*
      - É necessario verifcar se os eventos procedem como eventos competitivos de brawl stars
      */
+
     List<String> modos3x3 = Arrays.asList(
             "brawlBall", "gemGrab", "bounty", "heist",
             "hotZone", "knockout", "siege", "wipeout"
@@ -51,31 +61,20 @@ public class BrawlService {
      -
      */
 
-    public Map<String, List<BrawlRequestMODEL.BattleLogInfo>> getTeams(String mainTag, HashMap<List<String>, String> tags) {
-
-        Map<String, List<BrawlRequestMODEL.BattleLogInfo>> objectReturn = new HashMap<>();
-
-        Optional<List<String>> listaDoTime = tags.keySet().stream()
-                .filter(lista -> lista.contains(mainTag))
-                .findFirst();
+    public TeamBattleDTO getTeams(String mainTag, TeamMODEL model) {
 
 
-        if (listaDoTime.isPresent()) {
-            List<String> listaTags = listaDoTime.get();
-            String nomeEquipe = tags.get(listaTags);
-
+        if (model.getPlayersTags().contains(mainTag)) {
+            List<String> listaTags = model.getPlayersTags();
+            String nomeEquipe = model.getTeamName();
             List<BrawlRequestMODEL.BattleLogInfo> partidas = getFilteredBattleLogs(mainTag, is3v3AndFriendlyMatchAndContainsAllPlayer(listaTags));
-
-            objectReturn.put(nomeEquipe, partidas);
+            return new TeamBattleDTO(nomeEquipe, partidas);
         } else {
-            /*
-            - Preciso urgentemente de um menu centralizado de tratamento de erros, nesta parte seria necessario soltar uma execessao, e passar em formato de HashMap
-             */
             log.error("Não foi possível encontrar a equipe para a tag principal '{}'. Verifique a lógica de negócio.", mainTag);
         }
-
-        return objectReturn;
+        return null;
     }
+
 
     /*
     Aqui vamos filtrar as batalhas com base no
