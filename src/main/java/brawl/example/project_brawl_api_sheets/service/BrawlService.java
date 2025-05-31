@@ -3,7 +3,7 @@ package brawl.example.project_brawl_api_sheets.service;
 import brawl.example.project_brawl_api_sheets.model.BrawlRequestMODEL;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -20,22 +20,36 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 @Service
 public class BrawlService {
+    /*
+    A bilioteca ObjectMapper vai servir para converter objeto em json, e json em objeto.
+     */
     private final ObjectMapper mapper;
+    /*
+    - Alimentar uma api, tipo colocar uma url e pegar os dados em uma classe mdoel.
+    - Principal forma de abrir a conexao com a api.
+     */
     private final RestTemplate restTemplate;
 
     @Value("${brawl.api.key}")
     private String apiToken;
-
+    /*
+     - É necessario verifcar se os eventos procedem como eventos competitivos de brawl stars
+     */
     List<String> modos3x3 = Arrays.asList(
             "brawlBall", "gemGrab", "bounty", "heist",
             "hotZone", "knockout", "siege", "wipeout"
     );
 
-@Autowired
+    @Autowired
     public BrawlService(RestTemplate restTemplate, ObjectMapper mapper) {
         this.restTemplate = restTemplate;
         this.mapper = mapper;
     }
+
+    /*
+   Vou otimizar
+     -
+     */
 
     public Map<String, List<BrawlRequestMODEL.BattleLogInfo>> getTeams(String mainTag, HashMap<List<String>, String> tags) {
 
@@ -45,20 +59,27 @@ public class BrawlService {
                 .filter(lista -> lista.contains(mainTag))
                 .findFirst();
 
+
         if (listaDoTime.isPresent()) {
             List<String> listaTags = listaDoTime.get();
-
             String nomeEquipe = tags.get(listaTags);
 
             List<BrawlRequestMODEL.BattleLogInfo> partidas = getFilteredBattleLogs(mainTag, is3v3AndFriendlyMatchAndContainsAllPlayer(listaTags));
 
             objectReturn.put(nomeEquipe, partidas);
         } else {
+            /*
+            - Preciso urgentemente de um menu centralizado de tratamento de erros, nesta parte seria necessario soltar uma execessao, e passar em formato de HashMap
+             */
             log.error("Não foi possível encontrar a equipe para a tag principal '{}'. Verifique a lógica de negócio.", mainTag);
         }
 
         return objectReturn;
     }
+
+    /*
+    Aqui vamos filtrar as batalhas com base no
+     */
 
     private List<BrawlRequestMODEL.BattleLogInfo> getFilteredBattleLogs(String playerTag, Predicate<BrawlRequestMODEL.BattleLogInfo>... filters) {
 
@@ -77,6 +98,7 @@ public class BrawlService {
                 .filter(combined)
                 .collect(Collectors.toList());
     }
+
 
     private ResponseEntity<String> fetchBattleLogFromApi(String mainTag) {
         HttpHeaders headers = new HttpHeaders();
@@ -126,7 +148,9 @@ public class BrawlService {
 
     private Predicate<BrawlRequestMODEL.BattleLogInfo> is3v3AndFriendlyMatchAndContainsAllPlayer(List<String> tags) {
         return is3v3Match().and(isFriendlyMatch().and(isTeamPresent(tags)));
+
     }
+
 
     private Predicate<BrawlRequestMODEL.BattleLogInfo> isTeamPresent(List<String> tags) {
         return player -> {
@@ -141,3 +165,4 @@ public class BrawlService {
         };
     }
 }
+
