@@ -1,6 +1,8 @@
 package brawl.example.project_brawl_api_sheets.service;
 
+import brawl.example.project_brawl_api_sheets.entity.PlayerTagData;
 import brawl.example.project_brawl_api_sheets.entity.PlayerTagEntity;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,12 +13,20 @@ import java.util.*;
 
 @Slf4j
 @Service
+@Getter
 public class ActionsBotService {
     private final Map<String, UserState> flowState = new HashMap<>();
     private final Map<String, PlayerTagEntity> parcialStorage = new HashMap<>();
     private final Map<String,List<String>> tagsReceive = new HashMap<>(4);
     private final Map<String, Integer> quantityTagsMap = new HashMap<>();
+    @Autowired
+    private PlayerTagData playerTagData;
+    @Autowired
+    private PlayerTagService tagService;
 
+    public Map<String, UserState> getFlowState() {
+        return flowState;
+    }
 
     public String inicializateFlow(String userID) {
         flowState.put(userID, UserState.TEAMNAME);
@@ -55,18 +65,28 @@ public class ActionsBotService {
                 } catch (NumberFormatException e) {
                     return "Please insert valid Number";
                 }
-
             case "TAG_INPUT":
                 List<String> listTags = tagsReceive.computeIfAbsent(userID, k -> new ArrayList<>());
-                listTags.add(mensageReceived);
+                if (tagService.isPlayerTagisValid(mensageReceived)) {
+                    String name = tagService.NameOfPlayer(mensageReceived);
+                    listTags.add(mensageReceived);
+                    int quantity = quantityTagsMap.getOrDefault(userID, 0);
+                    if (listTags.size() < quantity) {
+                        return "Very nice player" + name + "registered , insert Player tag number # " + (listTags.size() + 1);
+                    } else {
+                        flowState.put(userID, UserState.FINISHED);
 
-                int quantity = quantityTagsMap.getOrDefault(userID, 0);
+                        PlayerTagEntity finalEntity = parcialStorage.get(userID);
+                        finalEntity.setTags(listTags);
+                        finalEntity.setDiscordID(userID);
+                        playerTagData.save(finalEntity);
+                        System.out.println("Entidade salva com sucesso:" + finalEntity);
 
-                if (listTags.size() < quantity) {
-                    return "Very nice, insert Player tag number # " + (listTags.size() + 1);
-                } else {
-                    flowState.put(userID, UserState.FINISHED); // muda estado se quiser
-                    return "Thank you for contributing. All tags registered!";
+                        return "Thank you for contributing. All tags registered!";
+                    }
+                }else {
+
+                    return "Bro, this player not exist or you are loving registering a random player";
                 }
 
             case "FINISHED" :
@@ -78,11 +98,11 @@ public class ActionsBotService {
         }
     }
 
+
+
+
+
 public enum UserState {
     TEAMNAME,TAG_INPUT,FINISHED,TAG_QUANTITY;
 }
 }
-
-
-//vamos pedir para o usuario digitar o nome da equipe, depois iremos pedir para ele digitar a tag.
-//
