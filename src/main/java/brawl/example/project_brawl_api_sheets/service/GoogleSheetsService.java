@@ -1,18 +1,21 @@
 package brawl.example.project_brawl_api_sheets.service;
 
+import brawl.example.project_brawl_api_sheets.dto.TeamBattleDTO;
 import brawl.example.project_brawl_api_sheets.entity.PlayerTagData;
-import brawl.example.project_brawl_api_sheets.entity.PlayerTagEntity;
+import brawl.example.project_brawl_api_sheets.model.BrawlRequestMODEL;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class GoogleSheetsService {
 
@@ -26,94 +29,108 @@ public class GoogleSheetsService {
     }
 
 
-
-
-
     @Getter
     @Value("${sheets.id}")
     private String spreadsheetId;
-//[name,[jogador 1. jogador 2, jogador 3]
-
-    private String getCell(List<Object> linha, int index) {
-        return (linha.size() > index) ? linha.get(index).toString().trim() : "";
-    }
-
-    public HashMap<List<String>, String> getTags() throws IOException {
-        String range = "BATTLES!B2:F"; // Colunas B até E
-
-        ValueRange response = sheets.spreadsheets().values()
-                .get(getSpreadsheetId(), range)
-                .execute();
-
-        HashMap<List<String>, String> tagOfTeam = new HashMap<>();
-        List<List<Object>> linhas = response.getValues();
-        List<List<Object>> statusColuna = new ArrayList<>();
-
-        statusColuna.add(List.of("STATUS"));
-
-        for (int i = 0; i < linhas.size(); i++) {
-            List<Object> linha = linhas.get(i);
-            List<String> tagsPlayer = new ArrayList<>();
-
-            String tag1 = getCell(linha, 0);
-            String tag2 = getCell(linha, 1);
-            String tag3 = getCell(linha, 2);
-            String tag4 = getCell(linha, 3);
-            String teamName = getCell(linha, 4);
-
-            if (tag1.isBlank() || tag2.isBlank() || teamName.isBlank()) {
-                statusColuna.add(List.of(" Erro: TAG1, TAG2 e NOME são obrigatórios"));
-                continue;
-            }
-
-            tagsPlayer.add(tag1);
-            tagsPlayer.add(tag2);
-            if (!tag3.isBlank()) tagsPlayer.add(tag3);
-            if (!tag4.isBlank()) tagsPlayer.add(tag4);
 
 
-            tagOfTeam.put(tagsPlayer, teamName);
-
-
-            statusColuna.add(List.of("✅ OK"));
-        }
-
-
-        ValueRange statusRange = new ValueRange()
-                .setRange("G2")
-                .setValues(statusColuna.subList(1, statusColuna.size())); //
+    public void appendDataToSheet(String range, List<List<Object>> data) throws IOException {
+        ValueRange body = new ValueRange().setValues(data);
 
         sheets.spreadsheets().values()
-                .update(getSpreadsheetId(), "G2", statusRange)
+                .append(spreadsheetId, range, body)
                 .setValueInputOption("RAW")
                 .execute();
 
-        return tagOfTeam;
     }
 
-    public List<String> mainTag() throws IOException {
-        String range = "BATTLES!B2:B";
+    public List<List<Object>> getInfo(List<TeamBattleDTO> battleDto) throws IOException {
+        List<List<Object>> data = new ArrayList<>();
 
-        ValueRange response = sheets.spreadsheets().values()
-                .get(getSpreadsheetId(), range)
-                .execute();
-        List<List<Object>> linhas = response.getValues();
-        List<String> tagsPlayer = new ArrayList<>();
+        // Cabeçalho da planilha
+        data.add(Arrays.asList("Team Name", "Battle Time", "Mode", "Result", "Duration",
+                "Player #1", "Player #2", "Player #3",
+                "Brawler P#1", "Brawler P#2", "Brawler P#3",
+                "Opponent #1", "Opponent #2", "Opponent #3",
+                "Opponent Brawler #1", "Opponent Brawler #2", "Opponent Brawler #3"));
 
-        for (int i = 0; i < linhas.size(); i++) {
-            List<Object> linha = linhas.get(i);
-            String mainTag = getCell(linha, 0);
-            tagsPlayer.add(mainTag);
+        for (TeamBattleDTO team : battleDto) {
+            for (BrawlRequestMODEL.BattleLogInfo battle : team.getBattles()) {
+                List<List<BrawlRequestMODEL.Player>> teams = battle.getBattle().getTeams();
 
+                List<BrawlRequestMODEL.Player> aliados = new ArrayList<>();
+                List<BrawlRequestMODEL.Player> oponentes = new ArrayList<>();
+
+                if (teams.size() >= 2) {
+                    aliados = teams.get(0);
+                    oponentes = teams.get(1);
+                } else if (teams.size() == 1) {
+                    aliados = teams.get(0);
+                }
+
+                List<BrawlRequestMODEL.Player> playersAliados = aliados.size() > 3 ? aliados.subList(0, 3) : aliados;
+                List<BrawlRequestMODEL.Player> playersOponentes = oponentes.size() > 3 ? oponentes.subList(0, 3) : oponentes;
+
+                List<String> nomesAliados = playersAliados.stream()
+                        .map(BrawlRequestMODEL.Player::getName)
+                        .collect(Collectors.toList());
+
+                List<String> brawlersAliados = playersAliados.stream()
+                        .map(p -> p.getBrawler() != null ? p.getBrawler().getName() : "Not Found")
+                        .collect(Collectors.toList());
+
+                List<String> nomesOponentes = playersOponentes.stream()
+                        .map(BrawlRequestMODEL.Player::getName)
+                        .collect(Collectors.toList());
+
+                List<String> brawlersOponentes = playersOponentes.stream()
+                        .map(p -> p.getBrawler() != null ? p.getBrawler().getName() : "Not Found")
+                        .collect(Collectors.toList());
+
+                // Dados gerais
+                String result = battle.getBattle().getResult();
+                String battleTime = battle.getBattleTime();
+                String mode = battle.getBattle().getMode();
+                int duration = battle.getBattle().getDuration();
+
+                List<Object> linha = new ArrayList<>();
+                linha.add(team.getTeamName());
+                linha.add(battleTime);
+                linha.add(mode);
+                linha.add(result);
+                linha.add(duration);
+
+                // Garantir que tenha sempre 3 campos (mesmo que com "N/A")
+                preencher(linha, nomesAliados, 3);
+                preencher(linha, brawlersAliados, 3);
+                preencher(linha, nomesOponentes, 3);
+                preencher(linha, brawlersOponentes, 3);
+
+                data.add(linha);
+            }
         }
-        return tagsPlayer;
+
+        return data;
     }
+
+    private void preencher(List<Object> destino, List<String> origem, int tamanhoEsperado) {
+        for (int i = 0; i < tamanhoEsperado; i++) {
+            if (i < origem.size()) {
+                destino.add(origem.get(i));
+            } else {
+                destino.add("N/A");
+            }
+        }
+    }
+
 }
 
 
+//Aqui preciso receber um Team Model e as informações vou aramzenar em planilha.
+//No Sync Service vou fazer o for que vai pegar do mongoDb e vai colcoar na planilha.
+// Vamos fazer uma brinaceira com Threads pra atualizar esse no metodo constantemente
 
 
-
-
-
-
+//Tags das equipes
+//Faço um for pra pecorer as tags
+//Cadastro as
