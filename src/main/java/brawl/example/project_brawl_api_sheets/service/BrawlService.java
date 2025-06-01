@@ -33,8 +33,7 @@ public class BrawlService {
     private final RestTemplate restTemplate;
 
 
-    @Autowired
-    private TeamMODEL model;
+
     /*
     chave key em resouces
      */
@@ -136,7 +135,7 @@ public class BrawlService {
     private Predicate<BrawlRequestMODEL.BattleLogInfo> is3v3Match() {
         return item -> item != null &&
                 item.getBattle() != null &&
-                modos3x3.contains(item.getBattle().getType());
+                modos3x3.contains(item.getBattle().getMode());
     }
 
     private Predicate<BrawlRequestMODEL.BattleLogInfo> isFriendlyMatch() {
@@ -152,16 +151,22 @@ public class BrawlService {
 
 
     private Predicate<BrawlRequestMODEL.BattleLogInfo> isTeamPresent(List<String> tags) {
-        return player -> {
-            List<String> playerTags = player.getBattle()
-                    .getTeams()
-                    .getPlayersList()
-                    .stream()
-                    .map(p -> p.getTag().replace("#", ""))
-                    .collect(Collectors.toList());
+        return battleLogInfo -> {
+            List<List<BrawlRequestMODEL.Player>> teams = battleLogInfo.getBattle().getTeams();
 
-            return playerTags.containsAll(tags);
+            for (List<BrawlRequestMODEL.Player> team : teams) {
+                List<String> playerTags = team.stream()
+                        .map(p -> p.getTag().replace("#", ""))
+                        .collect(Collectors.toList());
+
+                if (playerTags.containsAll(tags)) {
+                    return true;
+                }
+            }
+
+            return false;
         };
     }
+
 }
 
