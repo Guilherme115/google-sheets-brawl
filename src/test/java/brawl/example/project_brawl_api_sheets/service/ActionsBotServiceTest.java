@@ -1,23 +1,33 @@
-/*
+
 package brawl.example.project_brawl_api_sheets.service;
 
-import brawl.example.project_brawl_api_sheets.entity.PlayerTagEntity;
+import brawl.example.project_brawl_api_sheets.entity.PlayerTagData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class ActionsBotServiceTest {
+   @Mock
+   PlayerTagData playerTagData;
+   @Mock
+   PlayerTagService tagService;
+   @InjectMocks
+   ActionsBotService service;
 
+    @BeforeEach
+    public void setup() {
+        MockitoAnnotations.openMocks(this);
+    }
 
     @Test
     @DisplayName("Start bot, Primary test")
     void inicializateFlow() {
-        ActionsBotService service = new ActionsBotService();
         String id = "user123";
         String response = service.inicializateFlow(id);
         assertEquals("Allright, let's get stared. Please insert name of Team", response);
@@ -26,14 +36,14 @@ class ActionsBotServiceTest {
 
     @Test
     @BeforeEach
-    void mainFlow_NAMETEAM() {
-        ActionsBotService service = new ActionsBotService();
+    void mainFlow_TeamNameAlreayRegister() {
         String id = "UserService";
         String teamName = "TeamName";
-        String resp1 = service.inicializateFlow(id);
-        assertEquals("Allright, let's get stared. Please insert name of Team", resp1);
-        String resp2 = service.mainFlow(id, teamName);
-        assertEquals("Please insert to quantity of tags", resp2);
+        Mockito.when(playerTagData.existsByTeamName(teamName)).thenReturn(true);
+        service.inicializateFlow(id);
+
+        String response = service.mainFlow(id, teamName);
+        assertEquals("Team name already registered",response);
         assertEquals(ActionsBotService.UserState.TAG_QUANTITY, service.getFlowState().get(id));
 
     }
@@ -41,7 +51,6 @@ class ActionsBotServiceTest {
     @Test
     @DisplayName("Verify if method return exactaly like as expected  ")
     void mainFlow_QUANTITY_TAGS_VALID() {
-        ActionsBotService service = new ActionsBotService();
         String id = "user123";
         service.getFlowState().put(id, ActionsBotService.UserState.TAG_QUANTITY);
 
@@ -53,7 +62,6 @@ class ActionsBotServiceTest {
     @Test
     @BeforeEach
     void mainFlow_QUANTITY_TAGS_INVALID() {
-        ActionsBotService service = new ActionsBotService();
         String id = "user123";
         service.getFlowState().put(id, ActionsBotService.UserState.TAG_QUANTITY);
 
@@ -65,7 +73,6 @@ class ActionsBotServiceTest {
     @Test
     @BeforeEach
     void mainFlow_INVALIDVALUE() {
-        ActionsBotService service = new ActionsBotService();
         String id = "User123";
         service.getFlowState().put(id , ActionsBotService.UserState.TAG_QUANTITY);
 
@@ -77,7 +84,6 @@ class ActionsBotServiceTest {
     @Test
     @BeforeEach
     void mainFlow_MAXIMUM_LIMIT() {
-        ActionsBotService service = new ActionsBotService();
         String id = "User123";
         service.getFlowState().put(id, ActionsBotService.UserState.TAG_QUANTITY);
 
@@ -86,4 +92,3 @@ class ActionsBotServiceTest {
 
     }
 }
-*/
