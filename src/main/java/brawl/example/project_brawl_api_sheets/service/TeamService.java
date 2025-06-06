@@ -16,11 +16,12 @@ public class TeamService {
     //Aqui vamos pegar os dados do mongo vamos armazenar no team model e retornar a merda do team modeL(Chamdo de DTO)
 
 
-    public List<TeamMODEL> getPlayerInfo() {
+    public List<TeamMODEL> getPlayersTagsANDnameTEAM() {
         List<TeamPlayerTag> dados = tagData.findAllBy();
-        TeamMODEL model = new TeamMODEL();
         List<TeamMODEL> listTeamModel = new ArrayList<>();
+
         for (TeamPlayerTag time : dados) {
+            TeamMODEL model = new TeamMODEL();
             model.setPlayersTags(time.getTags());
             model.setTeamName(time.getTeamName());
 
