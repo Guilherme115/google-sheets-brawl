@@ -4,12 +4,15 @@ import brawl.example.project_brawl_api_sheets.dto.TeamBattleDTO;
 import brawl.example.project_brawl_api_sheets.model.TeamMODEL;
 import com.google.api.services.sheets.v4.Sheets;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+
 @Service
 public class SyncService {
 
@@ -17,8 +20,9 @@ public class SyncService {
     private final BrawlService brawlService;
     private final TeamService service;
     private final Sheets sheetsService;
+    ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
-     @Autowired
+    @Autowired
     public SyncService(Sheets sheetsService, TeamService service, BrawlService brawlService, GoogleSheetsService googleSheetsService) {
         this.sheetsService = sheetsService;
         this.service = service;
@@ -26,24 +30,26 @@ public class SyncService {
         this.googleSheetsService = googleSheetsService;
     }
 
-    public String Sync() {
+    @Scheduled(fixedRate = 30000) // 30 segundos
+    public void sync() {
         List<TeamBattleDTO> teamBattleDTOS = new ArrayList<>();
-        for (TeamMODEL teamMODEL : service.getPlayerInfo()) {
-            String teamName = teamMODEL.getTeamName();
+        List<TeamMODEL> playersTagsANDnameTEAM = service.getPlayersTagsANDnameTEAM();
+
+        for (TeamMODEL teamMODEL : playersTagsANDnameTEAM) {
+            if (teamMODEL.getPlayersTags().isEmpty()) continue;
+
             String mainTag = teamMODEL.getPlayersTags().get(0);
             TeamBattleDTO teams = brawlService.getTeams(mainTag, teamMODEL);
             teamBattleDTOS.add(teams);
-
         }
+
         try {
             List<List<Object>> info = googleSheetsService.getInfo(teamBattleDTOS);
             googleSheetsService.appendDataToSheet("A1", info);
-
-            return "Sync Successful";
-
-
+            System.out.println("Sync Successful");
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.err.println("Erro ao sincronizar: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }
