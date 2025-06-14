@@ -1,6 +1,6 @@
-package brawl.example.brawl_tracker.entity;
+package brawl.example.brawl_tracker.brawl_core.entity;
 
-import brawl.example.brawl_tracker.model.TeamPlayerTag;
+import brawl.example.brawl_tracker.brawl_core.model.TeamPlayerTag;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 import java.util.*;

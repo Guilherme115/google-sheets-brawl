@@ -1,4 +1,4 @@
-package brawl.example.brawl_tracker.model;
+package brawl.example.brawl_tracker.brawl_core.model;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

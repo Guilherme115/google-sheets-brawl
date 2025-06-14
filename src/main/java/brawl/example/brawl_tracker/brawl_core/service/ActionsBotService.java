@@ -1,7 +1,7 @@
-package brawl.example.brawl_tracker.service;
+package brawl.example.brawl_tracker.brawl_core.service;
 
-import brawl.example.brawl_tracker.entity.PlayerTagData;
-import brawl.example.brawl_tracker.entity.PlayerTagEntity;
+import brawl.example.brawl_tracker.brawl_core.entity.PlayerTagData;
+import brawl.example.brawl_tracker.brawl_core.entity.PlayerTagEntity;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

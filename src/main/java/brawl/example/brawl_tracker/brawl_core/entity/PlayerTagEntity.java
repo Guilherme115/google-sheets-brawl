@@ -1,4 +1,4 @@
-package brawl.example.brawl_tracker.entity;
+package brawl.example.brawl_tracker.brawl_core.entity;
 
 import jakarta.persistence.Id;
 import lombok.Data;

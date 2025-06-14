@@ -1,11 +1,10 @@
-package brawl.example.project_brawl_api_sheets.service;
+package brawl.example.brawl_tracker.service;
 
-import brawl.example.project_brawl_api_sheets.dto.TeamBattleDTO;
-import brawl.example.project_brawl_api_sheets.model.BrawlRequestMODEL;
-import brawl.example.project_brawl_api_sheets.model.TeamMODEL;
+import brawl.example.brawl_tracker.brawl_core.dto.TeamBattleDTO;
+import brawl.example.brawl_tracker.brawl_core.model.BrawlRequestMODEL;
+import brawl.example.brawl_tracker.brawl_core.model.TeamMODEL;
+import brawl.example.brawl_tracker.brawl_core.service.BrawlService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.api.services.sheets.v4.Sheets;
-import okio.Path;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

@@ -1,4 +1,4 @@
-package brawl.example.brawl_tracker.config;
+package brawl.example.brawl_tracker.brawl_core.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

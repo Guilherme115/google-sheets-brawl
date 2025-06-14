@@ -1,6 +1,6 @@
-package brawl.example.brawl_tracker.config;
+package brawl.example.brawl_tracker.brawl_core.config;
 
-import brawl.example.brawl_tracker.controller.BotController;
+import brawl.example.brawl_tracker.brawl_core.controller.BotController;
 import jakarta.annotation.PostConstruct;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
