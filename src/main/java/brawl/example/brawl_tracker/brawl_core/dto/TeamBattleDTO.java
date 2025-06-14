@@ -1,6 +1,6 @@
-package brawl.example.brawl_tracker.dto;
+package brawl.example.brawl_tracker.brawl_core.dto;
 
-import brawl.example.brawl_tracker.model.BrawlRequestMODEL;
+import brawl.example.brawl_tracker.brawl_core.model.BrawlRequestMODEL;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

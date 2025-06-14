@@ -1,8 +1,10 @@
 
-package brawl.example.project_brawl_api_sheets.service;
+package brawl.example.brawl_tracker.service;
+import brawl.example.brawl_tracker.brawl_core.service.ActionsBotService;
+import brawl.example.brawl_tracker.brawl_core.service.PlayerTagService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
-import brawl.example.project_brawl_api_sheets.entity.PlayerTagData;
+import brawl.example.brawl_tracker.brawl_core.entity.PlayerTagData;
 import org.junit.jupiter.api.DisplayName;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

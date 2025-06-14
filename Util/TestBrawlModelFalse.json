@@ -1,0 +1,57 @@
+{
+  "items": [
+    {
+      "battleTime": "20250601T150000.000Z",
+      "battle": {
+        "mode": "gemGrab",
+        "id": "12345",
+        "type": "friendly",
+        "result": "victory",
+        "duration": 120,
+        "teams": [
+          [
+            {
+              "tag": "#PLAYER1",
+              "name": "",
+              "brawler": null
+            },
+            {
+              "tag": "#PLAYER2",
+              "name": "João",
+              "brawler": {
+                "name": "Colt"
+              }
+            },
+            {
+              "tag": "#PLAYER3",
+              "name": "Maria"
+            }
+          ],
+          [
+            {
+              "tag": "#PLAYER4",
+              "name": "Ana",
+              "brawler": {
+                "name": "Dynamike"
+              }
+            },
+            {
+              "tag": "#PLAYER5",
+              "name": "Carlos",
+              "brawler": {
+                "name": ""
+              }
+            },
+            {
+              "tag": "#PLAYER6",
+              "name": null,
+              "brawler": {
+                "name": "Nita"
+              }
+            }
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -1,7 +1,7 @@
-package brawl.example.brawl_tracker.dao;
+package brawl.example.brawl_tracker.brawl_core.dao;
 
-import brawl.example.brawl_tracker.entity.PlayerTagData;
-import brawl.example.brawl_tracker.entity.PlayerTagEntity;
+import brawl.example.brawl_tracker.brawl_core.entity.PlayerTagData;
+import brawl.example.brawl_tracker.brawl_core.entity.PlayerTagEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
