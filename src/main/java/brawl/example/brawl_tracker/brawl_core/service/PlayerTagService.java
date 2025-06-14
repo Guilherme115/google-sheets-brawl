@@ -1,6 +1,6 @@
-package brawl.example.brawl_tracker.service;
+package brawl.example.brawl_tracker.brawl_core.service;
 
-import brawl.example.brawl_tracker.model.PlayerValidModel;
+import brawl.example.brawl_tracker.brawl_core.model.PlayerValidModel;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;

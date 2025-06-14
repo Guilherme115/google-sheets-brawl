@@ -1,7 +1,7 @@
-package brawl.example.brawl_tracker.service;
+package brawl.example.brawl_tracker.brawl_core.service;
 
-import brawl.example.brawl_tracker.dto.TeamBattleDTO;
-import brawl.example.brawl_tracker.model.TeamMODEL;
+import brawl.example.brawl_tracker.brawl_core.dto.TeamBattleDTO;
+import brawl.example.brawl_tracker.brawl_core.model.TeamMODEL;
 import com.google.api.services.sheets.v4.Sheets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;

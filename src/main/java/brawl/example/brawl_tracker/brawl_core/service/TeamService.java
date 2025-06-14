@@ -1,8 +1,8 @@
-package brawl.example.brawl_tracker.service;
+package brawl.example.brawl_tracker.brawl_core.service;
 
-import brawl.example.brawl_tracker.entity.PlayerTagData;
-import brawl.example.brawl_tracker.model.TeamMODEL;
-import brawl.example.brawl_tracker.model.TeamPlayerTag;
+import brawl.example.brawl_tracker.brawl_core.entity.PlayerTagData;
+import brawl.example.brawl_tracker.brawl_core.model.TeamMODEL;
+import brawl.example.brawl_tracker.brawl_core.model.TeamPlayerTag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

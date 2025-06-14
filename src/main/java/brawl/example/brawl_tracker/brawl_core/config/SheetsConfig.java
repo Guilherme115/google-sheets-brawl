@@ -1,4 +1,4 @@
-package brawl.example.brawl_tracker.config;
+package brawl.example.brawl_tracker.brawl_core.config;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;

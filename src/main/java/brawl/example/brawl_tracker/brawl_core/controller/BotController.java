@@ -1,6 +1,6 @@
-package brawl.example.brawl_tracker.controller;
+package brawl.example.brawl_tracker.brawl_core.controller;
 
-import brawl.example.brawl_tracker.service.ActionsBotService;
+import brawl.example.brawl_tracker.brawl_core.service.ActionsBotService;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;

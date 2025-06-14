@@ -1,4 +1,4 @@
-package brawl.example.project_brawl_api_sheets;
+package brawl.example.brawl_tracker;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,8 +8,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class ProjectBrawlApiSheetsApplication {
 
-	public static void main(String[] Args) {
-		SpringApplication.run(ProjectBrawlApiSheetsApplication.class, Args);
+	public static void main(String[] args) {
+		SpringApplication.run(ProjectBrawlApiSheetsApplication.class, args);
 	}
 
 }

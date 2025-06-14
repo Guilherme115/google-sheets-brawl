@@ -1,6 +1,6 @@
-package brawl.example.brawl_tracker.controller;
+package brawl.example.brawl_tracker.brawl_core.controller;
 
-import brawl.example.brawl_tracker.service.SyncService;
+import brawl.example.brawl_tracker.brawl_core.service.SyncService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
