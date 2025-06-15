@@ -3,6 +3,7 @@ package com.example.web_manager.auth.util;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.security.Keys;
 
@@ -14,13 +15,12 @@ public class JwtUtil {
     private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS384);
 private final long expiration = 1000 * 60 * 60;
 
-    public String generateToken(String username) {
+    public String generateToken(OAuth2User username) {
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(username.getAttribute("username"))
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(key)
                 .compact();
-
     }
 
     public String extractUserName (String token) {
