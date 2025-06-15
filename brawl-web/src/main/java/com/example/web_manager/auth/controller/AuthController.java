@@ -16,13 +16,22 @@ public class AuthController {
         public String success(@AuthenticationPrincipal OAuth2User user) {
             return "Usuário logado com sucesso: " + user.getAttribute("username") + " (ID: " + user.getAttribute("id") + ")";
         }
-//Aqui faz o login
-        @GetMapping("/me")
-        public OAuth2User me(@AuthenticationPrincipal OAuth2User user) {
-            return user;
-        }
-    }
-/*
-- Aqui vamos receber o login do discord, iremos disponibilizar o avatar pro front
 
- */
+        String token = jwtUtil.generateToken(user);
+        Map<String,Object> response = new HashMap<>();
+        response.put("token", token);
+        response.put("user", Map.of(
+                "id", user.getAttribute("id"),
+                "username", user.getAttribute("username"),
+                "avatar", user.getAttribute("avatar")
+        ));
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/me")
+    public DiscordUserResponse me(@AuthenticationPrincipal OAuth2User user) {
+
+        return DiscordUserResponse.fromAuth2User(user);
+    }
+}
