@@ -1,3 +1,0 @@
-1 - I go need to guarantee that the MongoDB really its guarding the data
-2 - Before this, I need to see for method SyncService amd going to create one Sync for 2 methods : BotService and BrawlStarsServvice
-3 - Before i also to guarantee
