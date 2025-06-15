@@ -1,4 +1,4 @@
-package brawl.example.project_brawl_api_sheets;
+package brawl.example.brawl_tracker;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
