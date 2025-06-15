@@ -17,10 +17,12 @@ public class AuthController {
         this.jwtUtil = jwtUtil;
     }
 
-//Aqui é depoois que ele logou?
-        @GetMapping("/success")
-        public String success(@AuthenticationPrincipal OAuth2User user) {
-            return "Usuário logado com sucesso: " + user.getAttribute("username") + " (ID: " + user.getAttribute("id") + ")";
+
+    @GetMapping("/success")
+    public ResponseEntity<Map<String, Object>> success(@AuthenticationPrincipal OAuth2User user) {
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Usuário não autenticado"));
         }
 
         String token = jwtUtil.generateToken(user);
