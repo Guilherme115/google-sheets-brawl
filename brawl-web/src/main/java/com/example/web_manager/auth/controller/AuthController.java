@@ -10,6 +10,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/auth")
 public class AuthController {
 
+    private final JwtUtil jwtUtil;
+
+    @Autowired
+    public AuthController(JwtUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
+    }
 
 //Aqui é depoois que ele logou?
         @GetMapping("/success")
