@@ -1,9 +1,10 @@
-HELP.md
+brawl-tracker-sheets-web/HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-src/main/resources/planar-alliance-460322-s9-b4ef8b49b442.json
+core/src/main/resources/planar-alliance-460322-s9-b4ef8b49b442.json
+brawl-core/src/main/resources/application.properties
 src/main/resources/application.properties
 
 
