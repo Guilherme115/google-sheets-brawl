@@ -29,6 +29,7 @@
     <modules>
         <module>brawl-web</module>
         <module>brawl-core</module>
+        <module>data-analysis</module>
 
     </modules>
 
