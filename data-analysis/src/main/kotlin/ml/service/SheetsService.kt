@@ -9,26 +9,21 @@ import org.springframework.stereotype.Service
 @Service
 class SheetssService(private val sheetsConfig: SheetsConfig) {
 
+
     val sheetService = sheetsConfig.getSheets()
     val spreadsheetId = sheetsConfig.spreadsheetId
 
-    fun getData(sheetsService: Sheets, spreadsheetId: String, range: String): List<List<Any>> {
-        val response: ValueRange = sheetsService.spreadsheets().values()
-            .get(spreadsheetId, range)
-            .execute()
-        return response.getValues() ?: emptyList()
+
+
+        fun getData(): List<List<Any>> {
+            val response: ValueRange = sheetsConfig.getSheets().spreadsheets().values()
+                .get(spreadsheetId, "BATTLES!A:Z")
+                .execute()
+            return response.getValues() ?: emptyList()
+        }
     }
 
 
-}
 
 
-//val sheetsConfig = SheetsConfig()
-//val sheetsService = sheetsConfig.getSheetsService()
-//
-//val response = sheetsService.spreadsheets().values()
-//    .get(sheetsConfig.spreadsheetId, "Sheet1!A1:D10")
-//    .execute()
-//
-//val values = response.getValues()
-//println(values)
+
