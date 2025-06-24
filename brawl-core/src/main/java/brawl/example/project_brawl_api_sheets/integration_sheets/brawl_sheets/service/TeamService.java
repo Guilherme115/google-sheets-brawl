@@ -1,8 +1,8 @@
-package brawl.example.project_brawl_api_sheets.integration_sheets.service;
+package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.service;
 
-import brawl.example.project_brawl_api_sheets.integration_sheets.entity.PlayerTagData;
-import brawl.example.project_brawl_api_sheets.integration_sheets.model.TeamMODEL;
-import brawl.example.project_brawl_api_sheets.integration_sheets.model.TeamPlayerTag;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.entity.PlayerTagData;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model.TeamMODEL;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model.TeamPlayerTag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
