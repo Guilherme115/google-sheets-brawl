@@ -1,7 +1,8 @@
-package brawl.example.project_brawl_api_sheets.integration_sheets.service;
+package brawl.example.project_brawl_api_sheets.integration_sheets.bot_discord.service;
 
-import brawl.example.project_brawl_api_sheets.integration_sheets.entity.PlayerTagData;
-import brawl.example.project_brawl_api_sheets.integration_sheets.entity.PlayerTagEntity;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.entity.PlayerTagData;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.entity.PlayerTagEntity;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.service.PlayerTagService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ public class ActionsBotService {
     private final Map<String, Integer> quantityTagsMap = new HashMap<>();
 
     private final PlayerTagData playerTagData;
-    private final  PlayerTagService tagService;
+    private final PlayerTagService tagService;
 
     @Autowired
     public ActionsBotService(PlayerTagData playerTagData, PlayerTagService tagService) {
