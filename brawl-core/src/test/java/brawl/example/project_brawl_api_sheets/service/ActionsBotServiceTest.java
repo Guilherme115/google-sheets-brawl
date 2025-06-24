@@ -1,9 +1,9 @@
 
 package brawl.example.project_brawl_api_sheets.service;
 
-import brawl.example.project_brawl_api_sheets.integration_sheets.entity.PlayerTagData;
-import brawl.example.project_brawl_api_sheets.integration_sheets.service.ActionsBotService;
-import brawl.example.project_brawl_api_sheets.integration_sheets.service.PlayerTagService;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.entity.PlayerTagData;
+import brawl.example.project_brawl_api_sheets.integration_sheets.bot_discord.service.ActionsBotService;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.service.PlayerTagService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
