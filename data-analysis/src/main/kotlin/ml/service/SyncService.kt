@@ -1,6 +1,7 @@
 package com.guilherme.ml.service
 
 import com.guilherme.ml.dto.MatchDTO
+import com.guilherme.ml.model.BrawlerUsage
 
 class SyncService (
     private val convert : ConvertService,
@@ -12,7 +13,7 @@ class SyncService (
         return convert.convertToDto(lists)
 
     }
-    fun mostUsedBrawlers () : List<Pair<String, Int>> {
+    fun mostUsedBrawlers () :List<BrawlerUsage>{
         val list = config()
         return analysis.mostUsedBrawlers(list)
 
