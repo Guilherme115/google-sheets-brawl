@@ -22,7 +22,6 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <!-- Pode gerenciar versões comuns aqui (Lombok, JPA, etc) -->
         </dependencies>
     </dependencyManagement>
 
@@ -30,7 +29,6 @@
         <module>brawl-web</module>
         <module>brawl-core</module>
         <module>data-analysis</module>
-
     </modules>
 
 </project>
