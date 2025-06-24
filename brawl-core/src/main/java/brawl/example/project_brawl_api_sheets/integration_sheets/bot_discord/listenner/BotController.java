@@ -1,6 +1,6 @@
-package brawl.example.project_brawl_api_sheets.integration_sheets.controller;
+package brawl.example.project_brawl_api_sheets.integration_sheets.bot_discord.listenner;
 
-import brawl.example.project_brawl_api_sheets.integration_sheets.service.ActionsBotService;
+import brawl.example.project_brawl_api_sheets.integration_sheets.bot_discord.service.ActionsBotService;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;

@@ -1,6 +1,6 @@
-package brawl.example.project_brawl_api_sheets.integration_sheets.controller;
+package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.controller;
 
-import brawl.example.project_brawl_api_sheets.integration_sheets.service.SyncService;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.service.SyncService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

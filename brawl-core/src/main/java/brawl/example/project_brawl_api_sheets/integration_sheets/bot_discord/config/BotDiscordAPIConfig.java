@@ -1,6 +1,6 @@
-package brawl.example.project_brawl_api_sheets.integration_sheets.config;
+package brawl.example.project_brawl_api_sheets.integration_sheets.bot_discord.config;
 
-import brawl.example.project_brawl_api_sheets.integration_sheets.controller.BotController;
+import brawl.example.project_brawl_api_sheets.integration_sheets.bot_discord.listenner.BotController;
 import jakarta.annotation.PostConstruct;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;

@@ -1,4 +1,4 @@
-package brawl.example.project_brawl_api_sheets.integration_sheets.entity;
+package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.entity;
 
 import jakarta.persistence.Id;
 import lombok.Data;

@@ -1,8 +1,8 @@
-package brawl.example.project_brawl_api_sheets.integration_sheets.service;
+package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.service;
 
-import brawl.example.project_brawl_api_sheets.integration_sheets.dto.TeamBattleDTO;
-import brawl.example.project_brawl_api_sheets.integration_sheets.model.BrawlRequestMODEL;
-import brawl.example.project_brawl_api_sheets.integration_sheets.model.TeamMODEL;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.dto.TeamBattleDTO;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model.BrawlRequestMODEL;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model.TeamMODEL;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.*;

@@ -1,4 +1,4 @@
-package brawl.example.project_brawl_api_sheets.integration_sheets.model;
+package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model;
 
 import lombok.*;
 

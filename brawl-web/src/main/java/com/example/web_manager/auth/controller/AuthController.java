@@ -2,6 +2,7 @@ package com.example.web_manager.auth.controller;
 
 import com.example.web_manager.auth.dto.DiscordUserResponse;
 import com.example.web_manager.auth.util.JwtUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,22 +29,23 @@ public class AuthController {
 
 
     @GetMapping("/success")
-    public ResponseEntity<Map<String, Object>> success(@AuthenticationPrincipal OAuth2User user) {
-
+    public void success(@AuthenticationPrincipal OAuth2User user, HttpServletResponse response) throws IOException {
         if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Usuário não autenticado"));
+            response.sendRedirect("http://localhost:4200/login?error=unauthorized");
+            return;
         }
 
         String token = jwtUtil.generateToken(user);
-        Map<String,Object> response = new HashMap<>();
-        response.put("token", token);
-        response.put("user", Map.of(
-                "id", user.getAttribute("id"),
-                "username", user.getAttribute("username"),
-                "avatar", user.getAttribute("avatar")
-        ));
+        String id = user.getAttribute("id");
+        String username = user.getAttribute("username");
+        String avatar = user.getAttribute("avatar");
 
-        return ResponseEntity.ok(response);
+        String redirectUrl = String.format(
+                "http://localhost:4200/login-success?token=%s&id=%s&username=%s&avatar=%s",
+                token, id, username, avatar
+        );
+
+        response.sendRedirect(redirectUrl);
     }
 
     @GetMapping("/me")

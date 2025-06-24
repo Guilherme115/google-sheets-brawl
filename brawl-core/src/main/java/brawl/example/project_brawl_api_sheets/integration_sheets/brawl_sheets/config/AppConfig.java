@@ -1,9 +1,11 @@
-package brawl.example.project_brawl_api_sheets.integration_sheets.util;
+package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.config;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
-public class OpenURL {
+@Configuration
+public class AppConfig {
 
     @Bean
     public RestTemplate restTemplate() {

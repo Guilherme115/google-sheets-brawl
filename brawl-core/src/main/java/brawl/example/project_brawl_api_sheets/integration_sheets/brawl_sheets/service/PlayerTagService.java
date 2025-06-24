@@ -1,6 +1,6 @@
-package brawl.example.project_brawl_api_sheets.integration_sheets.service;
+package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.service;
 
-import brawl.example.project_brawl_api_sheets.integration_sheets.model.PlayerValidModel;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model.PlayerValidModel;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;

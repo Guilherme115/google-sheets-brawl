@@ -19,4 +19,7 @@ class AnalysisController(
     fun mostUsedBrawlers(): List<Pair<String, Int>> {
         return syncService.mostUsedBrawlers()
     }
+
+
+    // o fluxo vai se basear em salvar as analise no banco de dados.
 }

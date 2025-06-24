@@ -1,7 +1,7 @@
-package brawl.example.project_brawl_api_sheets.integration_sheets.dao;
+package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.dao;
 
-import brawl.example.project_brawl_api_sheets.integration_sheets.entity.PlayerTagData;
-import brawl.example.project_brawl_api_sheets.integration_sheets.entity.PlayerTagEntity;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.entity.PlayerTagData;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.entity.PlayerTagEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

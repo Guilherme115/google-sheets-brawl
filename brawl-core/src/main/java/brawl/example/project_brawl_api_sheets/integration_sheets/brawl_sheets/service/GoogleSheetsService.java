@@ -1,8 +1,8 @@
-package brawl.example.project_brawl_api_sheets.integration_sheets.service;
+package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.service;
 
-import brawl.example.project_brawl_api_sheets.integration_sheets.dto.TeamBattleDTO;
-import brawl.example.project_brawl_api_sheets.integration_sheets.entity.PlayerTagData;
-import brawl.example.project_brawl_api_sheets.integration_sheets.model.BrawlRequestMODEL;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.dto.TeamBattleDTO;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.entity.PlayerTagData;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model.BrawlRequestMODEL;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import lombok.Getter;

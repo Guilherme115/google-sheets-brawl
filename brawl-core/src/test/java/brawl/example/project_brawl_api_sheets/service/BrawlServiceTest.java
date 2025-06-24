@@ -1,9 +1,9 @@
 package brawl.example.project_brawl_api_sheets.service;
 
-import brawl.example.project_brawl_api_sheets.integration_sheets.dto.TeamBattleDTO;
-import brawl.example.project_brawl_api_sheets.integration_sheets.model.BrawlRequestMODEL;
-import brawl.example.project_brawl_api_sheets.integration_sheets.model.TeamMODEL;
-import brawl.example.project_brawl_api_sheets.integration_sheets.service.BrawlService;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.dto.TeamBattleDTO;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model.BrawlRequestMODEL;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model.TeamMODEL;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.service.BrawlService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

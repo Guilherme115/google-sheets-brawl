@@ -1,6 +1,6 @@
-package brawl.example.project_brawl_api_sheets.integration_sheets.entity;
+package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.entity;
 
-import brawl.example.project_brawl_api_sheets.integration_sheets.model.TeamPlayerTag;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model.TeamPlayerTag;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 import java.util.*;
