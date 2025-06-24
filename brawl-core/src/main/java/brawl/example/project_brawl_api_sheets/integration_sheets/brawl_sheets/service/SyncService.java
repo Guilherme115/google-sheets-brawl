@@ -1,7 +1,7 @@
-package brawl.example.project_brawl_api_sheets.integration_sheets.service;
+package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.service;
 
-import brawl.example.project_brawl_api_sheets.integration_sheets.dto.TeamBattleDTO;
-import brawl.example.project_brawl_api_sheets.integration_sheets.model.TeamMODEL;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.dto.TeamBattleDTO;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model.TeamMODEL;
 import com.google.api.services.sheets.v4.Sheets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;

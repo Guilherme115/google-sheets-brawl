@@ -1,4 +1,4 @@
-package brawl.example.project_brawl_api_sheets.integration_sheets.config;
+package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.config;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
