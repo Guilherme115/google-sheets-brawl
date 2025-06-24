@@ -1,6 +1,6 @@
-package brawl.example.project_brawl_api_sheets.integration_sheets.dto;
+package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.dto;
 
-import brawl.example.project_brawl_api_sheets.integration_sheets.model.BrawlRequestMODEL;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model.BrawlRequestMODEL;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
