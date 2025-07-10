@@ -1,16 +1,8 @@
+package brawl.example.project_brawl_api_sheets.service;
 
-<<<<<<<< HEAD:brawl-core/src/test/java/brawl/example/project_brawl_api_sheets/service/GoogleSheetsServiceTest.java
 import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.dto.TeamBattleDTO;
-import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model.BrawlRequestMODEL;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model.BattleLog;
 import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.service.GoogleSheetsService;
-========
-package brawl.example.brawl_tracker.service;
-
-
-import brawl.example.brawl_tracker.brawl_core.dto.TeamBattleDTO;
-import brawl.example.brawl_tracker.brawl_core.model.BrawlRequestMODEL;
-import brawl.example.brawl_tracker.brawl_core.service.GoogleSheetsService;
->>>>>>>> origin/main:src/test/java/brawl/example/brawl_tracker/service/GoogleSheetsServiceTest.java
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.services.sheets.v4.Sheets;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,8 +13,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,28 +25,34 @@ import static org.mockito.Mockito.when;
 class GoogleSheetsServiceTest {
 
     @Mock
-    Sheets sheets; // <-- isso que está faltando
+    Sheets sheets;
+
     @Mock
     Sheets.Spreadsheets spreadsheets;
 
     @InjectMocks
     GoogleSheetsService service;
 
-    File file = new File("Util/TestBrawlModel.json");
-    File failledFile = new File("Util/TestBrawlModelFalse.json");
+    ObjectMapper mapper = new ObjectMapper();
 
     @BeforeEach
     void setUp() throws Exception {
-        // Mockando o retorno sheets.spreadsheets()
         when(sheets.spreadsheets()).thenReturn(spreadsheets);
+    }
+
+    private BattleLog loadBattleLog(String resourcePath) throws Exception {
+        InputStream is = getClass().getClassLoader().getResourceAsStream(resourcePath);
+        if (is == null) {
+            throw new IllegalStateException("Arquivo não encontrado: " + resourcePath);
+        }
+        return mapper.readValue(is, BattleLog.class);
     }
 
     @Test
     @DisplayName("Deve gerar 17 Colunas, para passar no teste")
-    void getInfo_17_COLLUMNS() throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        BrawlRequestMODEL logInfo = mapper.readValue(file, BrawlRequestMODEL.class);
-        List<BrawlRequestMODEL.BattleLogInfo> items = logInfo.getItems();
+    void getInfo_17_COLLUMNS() throws Exception {
+        BattleLog logInfo = loadBattleLog("Util/TestBrawlModel.json");
+        List<BattleLog.BattleLogInfo> items = logInfo.getItems();
         List<TeamBattleDTO> batalhasDto = new ArrayList<>(List.of(new TeamBattleDTO("SolidName", items)));
         List<List<Object>> info = service.getInfo(batalhasDto);
 
@@ -65,10 +63,9 @@ class GoogleSheetsServiceTest {
 
     @Test
     @DisplayName("Deve gerar 17 colunas mesmo com campos vazios")
-    void getInfo_17_COLLUMS_DATANULL() throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        BrawlRequestMODEL logInfo = mapper.readValue(failledFile, BrawlRequestMODEL.class);
-        List<BrawlRequestMODEL.BattleLogInfo> items = logInfo.getItems();
+    void getInfo_17_COLLUMS_DATANULL() throws Exception {
+        BattleLog logInfo = loadBattleLog("Util/TestBrawlModelFalse.json");
+        List<BattleLog.BattleLogInfo> items = logInfo.getItems();
         List<TeamBattleDTO> batalhasDto = new ArrayList<>(List.of(new TeamBattleDTO("SolidName", items)));
         List<List<Object>> info = service.getInfo(batalhasDto);
 
@@ -77,4 +74,3 @@ class GoogleSheetsServiceTest {
         }
     }
 }
-

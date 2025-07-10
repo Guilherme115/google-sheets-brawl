@@ -130,6 +130,17 @@ public class ActionsBotService {
         }
     }
 
+   /* public String getInfoTeam (String userID, String mensageReceived) {
+        UserState teamName = flowState.put(userID, UserState.TEAMNAME);
+        return "Please, Insert Team Namee that u want get data";
+
+        if (flowState.get(userID) == "TEAMNAME") {
+
+
+
+        }
+        }
+*/
     public enum UserState {TEAMNAME, TAG_INPUT, FINISHED, TAG_QUANTITY}
 
 }

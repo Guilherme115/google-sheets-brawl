@@ -30,7 +30,10 @@ public class BotDiscordAPIConfig {
 
         jda.updateCommands()
                 .addCommands(
-                        Commands.slash("infoteams", "Contribute registering the teams")
+                        Commands.slash("register", "Contribute registering the teams"),
+                        Commands.slash("status-team", "Show the most winning compositions")
+
+
                 )
                 .queue();
     }

@@ -6,11 +6,8 @@ import org.springframework.stereotype.Component;
 @Component
 @Data
 public class RequestAnalysisDTO {
-    /*
-    - INFO MOST BRAWLERS USAGE
-    - INFO STILL LIMITED
-     */
-    private String info;
+    //metodo pra testar primeiro
+    private String TeamName;
 
 
 }

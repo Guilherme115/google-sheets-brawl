@@ -1,12 +1,18 @@
 package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
-public class BrawlRequestMODEL {
+@Entity
+public class BattleLog {
+
     @JsonProperty("items")
+    @Id
+    private long id;
     private List<BattleLogInfo> items;
 
 

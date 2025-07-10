@@ -1,7 +1,7 @@
 package brawl.example.project_brawl_api_sheets.service;
 
 import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.dto.TeamBattleDTO;
-import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model.BrawlRequestMODEL;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model.BattleLog;
 import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model.TeamMODEL;
 import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.service.BrawlService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -58,12 +58,12 @@ class BrawlServiceTest {
 
         ObjectMapper realMapper = new ObjectMapper();
         String jsonContent = new String(Files.readAllBytes(file.toPath()));
-        BrawlRequestMODEL logInfo = realMapper.readValue(file, BrawlRequestMODEL.class);
+        BattleLog logInfo = realMapper.readValue(file, BattleLog.class);
         ResponseEntity<String> fakeResponse = ResponseEntity.ok(jsonContent);
 
         Mockito.
                 when(mapper.readValue(Mockito.any(String.class),
-                        Mockito.eq(BrawlRequestMODEL.class)))
+                        Mockito.eq(BattleLog.class)))
                 .thenReturn(logInfo);
 
 
@@ -94,12 +94,12 @@ class BrawlServiceTest {
 
         ObjectMapper realMapper = new ObjectMapper();
         String jsonContent = new String(Files.readAllBytes(file.toPath()));
-        BrawlRequestMODEL logInfo = realMapper.readValue(file, BrawlRequestMODEL.class);
+        BattleLog logInfo = realMapper.readValue(file, BattleLog.class);
         ResponseEntity<String> fakeResponse = ResponseEntity.ok(jsonContent);
 
         Mockito.
                 when(mapper.readValue(Mockito.any(String.class),
-                        Mockito.eq(BrawlRequestMODEL.class)))
+                        Mockito.eq(BattleLog.class)))
                 .thenReturn(logInfo);
 
 

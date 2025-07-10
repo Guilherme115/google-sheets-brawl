@@ -1,7 +1,7 @@
 package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.service;
 
 import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.dto.TeamBattleDTO;
-import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model.BrawlRequestMODEL;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model.BattleLog;
 import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model.TeamMODEL;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -73,7 +73,7 @@ public class BrawlService {
 
         if (listaTags.contains(mainTag)) {
             String nomeEquipe = model.getTeamName();
-            List<BrawlRequestMODEL.BattleLogInfo> partidas = getFilteredBattleLogs(
+            List<BattleLog.BattleLogInfo> partidas = getFilteredBattleLogs(
                     mainTag,
                     is3v3AndFriendlyMatchAndContainsAllPlayer(listaTags)
             );
@@ -89,17 +89,17 @@ public class BrawlService {
     Aqui vamos filtrar as batalhas com base no
      */
 
-    private List<BrawlRequestMODEL.BattleLogInfo> getFilteredBattleLogs(String playerTag, Predicate<BrawlRequestMODEL.BattleLogInfo>... filters) {
+    private List<BattleLog.BattleLogInfo> getFilteredBattleLogs(String playerTag, Predicate<BattleLog.BattleLogInfo>... filters) {
 
         String rawJson = fetchRawJson(playerTag);
-        BrawlRequestMODEL model = parseJson(rawJson);
+        BattleLog model = parseJson(rawJson);
 
         if (model == null || model.getItems() == null) {
             log.warn("Modelo nulo ou sem items");
             return Collections.emptyList();
         }
 
-        Predicate<BrawlRequestMODEL.BattleLogInfo> combined = Arrays.stream(filters)
+        Predicate<BattleLog.BattleLogInfo> combined = Arrays.stream(filters)
                 .reduce(x -> true, Predicate::and);
 
         return model.getItems().stream()
@@ -130,9 +130,9 @@ public class BrawlService {
         return response.getBody();
     }
 
-    private BrawlRequestMODEL parseJson(String json) {
+    private BattleLog parseJson(String json) {
         try {
-            BrawlRequestMODEL model = mapper.readValue(json, BrawlRequestMODEL.class);
+            BattleLog model = mapper.readValue(json, BattleLog.class);
             log.info("JSON desserializado com sucesso. Quantidade de items: {}",
                     model.getItems() != null ? model.getItems().size() : 0);
             return model;
@@ -142,29 +142,29 @@ public class BrawlService {
         }
     }
 
-    private Predicate<BrawlRequestMODEL.BattleLogInfo> is3v3Match() {
+    private Predicate<BattleLog.BattleLogInfo> is3v3Match() {
         return item -> item != null &&
                 item.getBattle() != null &&
                 modos3x3.contains(item.getBattle().getMode());
     }
 
-    private Predicate<BrawlRequestMODEL.BattleLogInfo> isFriendlyMatch() {
+    private Predicate<BattleLog.BattleLogInfo> isFriendlyMatch() {
         return item -> item != null &&
                 item.getBattle() != null &&
                 "friendly".equalsIgnoreCase(item.getBattle().getType());
     }
 
-    private Predicate<BrawlRequestMODEL.BattleLogInfo> is3v3AndFriendlyMatchAndContainsAllPlayer(List<String> tags) {
+    private Predicate<BattleLog.BattleLogInfo> is3v3AndFriendlyMatchAndContainsAllPlayer(List<String> tags) {
         return is3v3Match().and(isFriendlyMatch().and(isTeamPresent(tags)));
 
     }
 
 
-    private Predicate<BrawlRequestMODEL.BattleLogInfo> isTeamPresent(List<String> tags) {
+    private Predicate<BattleLog.BattleLogInfo> isTeamPresent(List<String> tags) {
         return battleLogInfo -> {
-            List<List<BrawlRequestMODEL.Player>> teams = battleLogInfo.getBattle().getTeams();
+            List<List<BattleLog.Player>> teams = battleLogInfo.getBattle().getTeams();
 
-            for (List<BrawlRequestMODEL.Player> team : teams) {
+            for (List<BattleLog.Player> team : teams) {
                 List<String> playerTags = team.stream()
                         .map(p -> p.getTag().replace("#", ""))
                         .collect(Collectors.toList());

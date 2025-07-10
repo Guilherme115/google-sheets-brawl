@@ -2,7 +2,7 @@ package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.s
 
 import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.dto.TeamBattleDTO;
 import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.entity.PlayerTagData;
-import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model.BrawlRequestMODEL;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model.BattleLog;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import lombok.Getter;
@@ -75,7 +75,7 @@ public class GoogleSheetsService {
 
 
         for (TeamBattleDTO team : battleDto) {
-            for (BrawlRequestMODEL.BattleLogInfo battle : team.getBattles()) {
+            for (BattleLog.BattleLogInfo battle : team.getBattles()) {
 
                 String id = battle.getBattle().getId();
                 String battleTime = battle.getBattleTime();
@@ -83,12 +83,12 @@ public class GoogleSheetsService {
 
                 if (cache.contains(uniqueKey)) continue;
 
-                List<List<BrawlRequestMODEL.Player>> teams = battle.getBattle().getTeams();
-                List<BrawlRequestMODEL.Player> aliados = teams.size() >= 1 ? teams.get(0) : new ArrayList<>();
-                List<BrawlRequestMODEL.Player> oponentes = teams.size() >= 2 ? teams.get(1) : new ArrayList<>();
+                List<List<BattleLog.Player>> teams = battle.getBattle().getTeams();
+                List<BattleLog.Player> aliados = teams.size() >= 1 ? teams.get(0) : new ArrayList<>();
+                List<BattleLog.Player> oponentes = teams.size() >= 2 ? teams.get(1) : new ArrayList<>();
 
-                List<BrawlRequestMODEL.Player> playersAliados = aliados.size() >= 3 ? aliados.subList(0, 3) : aliados;
-                List<BrawlRequestMODEL.Player> playersOponentes = oponentes.size() >= 3 ? oponentes.subList(0, 3) : oponentes;
+                List<BattleLog.Player> playersAliados = aliados.size() >= 3 ? aliados.subList(0, 3) : aliados;
+                List<BattleLog.Player> playersOponentes = oponentes.size() >= 3 ? oponentes.subList(0, 3) : oponentes;
 
                 List<String> nomesAliados = playersAliados.stream()
                         .map(p -> Optional.ofNullable(p.getName()).orElse("N/A"))

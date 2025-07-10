@@ -4,7 +4,9 @@ import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.mo
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 import java.util.*;
-
+/*
+Serviço que valida se uma equipe é valida. (Obs: Os dados vao estar armazenado em MONGO DB)
+ */
 @Repository
 public interface PlayerTagData extends MongoRepository<PlayerTagEntity, String> {
     boolean existsByTags(String tags);

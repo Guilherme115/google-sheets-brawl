@@ -30,7 +30,6 @@ public class BotController extends ListenerAdapter {
         String msg = event.getMessage().getContentRaw();
         String resposta = service.mainFlow(userID, msg);
         event.getChannel().sendMessage(resposta).queue();
-        System.out.println("MENSAGEM RECEBIDA: '" + msg + "' (tamanho: " + msg.length() + ")");
 
     }
 }

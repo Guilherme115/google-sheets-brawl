@@ -30,7 +30,7 @@ public class SyncService {
         this.googleSheetsService = googleSheetsService;
     }
 
-    @Scheduled(fixedRate = 30000) // 30 segundos
+    @Scheduled(fixedRate = 30000) //
     public void sync() {
         List<TeamBattleDTO> teamBattleDTOS = new ArrayList<>();
         List<TeamMODEL> playersTagsANDnameTEAM = service.getPlayersTagsANDnameTEAM();
