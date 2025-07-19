@@ -1,7 +1,7 @@
 package brawl.example.project_brawl_api_sheets.integration_sheets.bot_discord.service;
 
-import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.entity.PlayerTagData;
-import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.entity.PlayerTagEntity;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.entity.PlayerTagRepository;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model.PlayerTagMODEL;
 import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.service.PlayerTagService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +20,7 @@ public class ActionsBotService {
     /*
     Aqui ele armazena as informações e coloca no MONGODB
      */
-    private final Map<String, PlayerTagEntity> parcialStorage = new HashMap<>();
+    private final Map<String, PlayerTagMODEL> parcialStorage = new HashMap<>();
     /*
     RECEBE ATÉ 4 TAGS.
      */
@@ -30,12 +30,12 @@ public class ActionsBotService {
      */
     private final Map<String, Integer> quantityTagsMap = new HashMap<>();
 
-    private final PlayerTagData playerTagData;
+    private final PlayerTagRepository playerTagRepository;
     private final PlayerTagService tagService;
 
     @Autowired
-    public ActionsBotService(PlayerTagData playerTagData, PlayerTagService tagService) {
-        this.playerTagData = playerTagData;
+    public ActionsBotService(PlayerTagRepository playerTagRepository, PlayerTagService tagService) {
+        this.playerTagRepository = playerTagRepository;
         this.tagService = tagService;
     }
 
@@ -47,7 +47,7 @@ public class ActionsBotService {
     public String inicializateFlow(String userID) {
         flowState.put(userID, UserState.TEAMNAME);
 
-        parcialStorage.put(userID, new PlayerTagEntity());
+        parcialStorage.put(userID, new PlayerTagMODEL());
 
         return "Allright, let's get stared. Please insert name of Team";
     }
@@ -56,11 +56,11 @@ public class ActionsBotService {
     public String mainFlow(String userID, String mensageReceived) {
 
         UserState state = flowState.get(userID);
-        PlayerTagEntity entity = parcialStorage.get(userID);
+        PlayerTagMODEL entity = parcialStorage.get(userID);
 
         switch (String.valueOf(state)) {
             case "TEAMNAME":
-                if (playerTagData.existsByTeamName(mensageReceived)) return "Team name already registered";
+                if (playerTagRepository.existsByTeamName(mensageReceived)) return "Team name already registered";
 
                 entity.setTeamName(mensageReceived);
                 flowState.put(userID, UserState.TAG_QUANTITY);
@@ -97,7 +97,7 @@ public class ActionsBotService {
                 List<String> listTags = tagsReceive.computeIfAbsent(userID, k -> new ArrayList<>());
                 if (tagService.isPlayerTagisValid(mensageReceived)) {
                     String name = tagService.NameOfPlayer(mensageReceived);
-                    if (playerTagData.existsByTags(mensageReceived))
+                    if (playerTagRepository.existsByTags(mensageReceived))
                         return "The player" + name + "Already registered" + "Use /Timescasted to access the list of teams have already been registered or Try again";
 
                     listTags.add(mensageReceived);
@@ -108,10 +108,10 @@ public class ActionsBotService {
                     } else {
                         flowState.put(userID, UserState.FINISHED);
 
-                        PlayerTagEntity finalEntity = parcialStorage.get(userID);
+                        PlayerTagMODEL finalEntity = parcialStorage.get(userID);
                         finalEntity.setTags(listTags);
                         finalEntity.setDiscordID(userID);
-                        playerTagData.save(finalEntity);
+                        playerTagRepository.save(finalEntity);
                         System.out.println("Entidade salva com sucesso:" + finalEntity);
 
                         return "Thank you for contributing. All tags registered!";

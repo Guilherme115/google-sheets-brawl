@@ -1,14 +1,12 @@
-package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model;
+package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.dto;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
-@Entity
-public class BattleLog {
+public class BattleLogReceiveDTO {
 
     @JsonProperty("items")
     @Id
