@@ -1,7 +1,7 @@
 package brawl.example.project_brawl_api_sheets.service;
 
-import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.dto.TeamBattleDTO;
-import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model.BattleLog;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.dto.TeamBattleResponseDTO;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.dto.BattleLogReceiveDTO;
 import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.service.GoogleSheetsService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.services.sheets.v4.Sheets;
@@ -14,7 +14,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,20 +39,20 @@ class GoogleSheetsServiceTest {
         when(sheets.spreadsheets()).thenReturn(spreadsheets);
     }
 
-    private BattleLog loadBattleLog(String resourcePath) throws Exception {
+    private BattleLogReceiveDTO loadBattleLog(String resourcePath) throws Exception {
         InputStream is = getClass().getClassLoader().getResourceAsStream(resourcePath);
         if (is == null) {
             throw new IllegalStateException("Arquivo não encontrado: " + resourcePath);
         }
-        return mapper.readValue(is, BattleLog.class);
+        return mapper.readValue(is, BattleLogReceiveDTO.class);
     }
 
     @Test
     @DisplayName("Deve gerar 17 Colunas, para passar no teste")
     void getInfo_17_COLLUMNS() throws Exception {
-        BattleLog logInfo = loadBattleLog("Util/TestBrawlModel.json");
-        List<BattleLog.BattleLogInfo> items = logInfo.getItems();
-        List<TeamBattleDTO> batalhasDto = new ArrayList<>(List.of(new TeamBattleDTO("SolidName", items)));
+        BattleLogReceiveDTO logInfo = loadBattleLog("Util/TestBrawlModel.json");
+        List<BattleLogReceiveDTO.BattleLogInfo> items = logInfo.getItems();
+        List<TeamBattleResponseDTO> batalhasDto = new ArrayList<>(List.of(new TeamBattleResponseDTO("SolidName", items)));
         List<List<Object>> info = service.getInfo(batalhasDto);
 
         for (List<Object> linha : info) {
@@ -64,9 +63,9 @@ class GoogleSheetsServiceTest {
     @Test
     @DisplayName("Deve gerar 17 colunas mesmo com campos vazios")
     void getInfo_17_COLLUMS_DATANULL() throws Exception {
-        BattleLog logInfo = loadBattleLog("Util/TestBrawlModelFalse.json");
-        List<BattleLog.BattleLogInfo> items = logInfo.getItems();
-        List<TeamBattleDTO> batalhasDto = new ArrayList<>(List.of(new TeamBattleDTO("SolidName", items)));
+        BattleLogReceiveDTO logInfo = loadBattleLog("Util/TestBrawlModelFalse.json");
+        List<BattleLogReceiveDTO.BattleLogInfo> items = logInfo.getItems();
+        List<TeamBattleResponseDTO> batalhasDto = new ArrayList<>(List.of(new TeamBattleResponseDTO("SolidName", items)));
         List<List<Object>> info = service.getInfo(batalhasDto);
 
         for (List<Object> linha : info) {

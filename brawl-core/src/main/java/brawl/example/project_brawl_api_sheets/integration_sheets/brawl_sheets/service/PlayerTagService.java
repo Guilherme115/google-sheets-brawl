@@ -1,6 +1,6 @@
 package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.service;
 
-import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model.PlayerValidModel;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.dto.PlayerValidDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -53,9 +53,9 @@ public class PlayerTagService {
         return response.getBody();
     }
 
-    private PlayerValidModel parseJson(String json) {
+    private PlayerValidDTO parseJson(String json) {
         try {
-            PlayerValidModel model = mapper.readValue(json, PlayerValidModel.class);
+            PlayerValidDTO model = mapper.readValue(json, PlayerValidDTO.class);
             log.info("JSON desserializado com sucesso. Quantidade de items: {}");
             if (model.getName() != null) return model;
 
@@ -69,7 +69,7 @@ public class PlayerTagService {
         String raw = fetchRawJson(tag);
 
         try {
-            PlayerValidModel player = parseJson(raw);
+            PlayerValidDTO player = parseJson(raw);
 
             if (player.getTrophies() > 30000 || player.isQualifiedFromChampionshipChallenge() || NameOfPlayer(tag) != null) {
                 return true;
@@ -88,7 +88,7 @@ public class PlayerTagService {
         String raw = fetchRawJson(tag);
 
         try {
-            PlayerValidModel player = parseJson(raw);
+            PlayerValidDTO player = parseJson(raw);
             String name = player.getName();
             return name;
 
