@@ -1,40 +1,35 @@
 package brawl.example.project_brawl_api_sheets.integration_sheets.bot_discord.config;
 
-import brawl.example.project_brawl_api_sheets.integration_sheets.bot_discord.listenner.BotController;
-import jakarta.annotation.PostConstruct;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
-import net.dv8tion.jda.api.requests.GatewayIntent;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.EventListener;
 
 @Configuration
 public class BotDiscordAPIConfig {
+    @Value("${discord.api.key}")
+    private String key;
 
-    private final BotController botListener;
+    @Autowired
+    private EventListener eventListener;
 
-    @Value("${bot.discord.token}")
-    private String token;
+    @Bean
+    public JDA jda() throws InterruptedException {
+        JDA jda = JDABuilder.createDefault(key)
+                .addEventListeners(eventListener)
+                .build().awaitReady();
+        jda.updateCommands().addCommands(
+                Commands.slash("register", "iniciar o processo de cadastro"),
+                Commands.slash("status-team", "Verifica o status de um time")
+                        .addOption(OptionType.STRING, "team_name", "O nome do time que deseja ver o status", true)
+        ).queue();
 
-    public BotDiscordAPIConfig(BotController botListener) {
-        this.botListener = botListener;
-    }
-
-    @PostConstruct
-    public void startBot() throws Exception {
-        JDA jda = JDABuilder.createDefault(token, GatewayIntent.GUILD_MESSAGES,
-                        GatewayIntent.MESSAGE_CONTENT)
-                .addEventListeners(botListener)
-                .build();
-
-        jda.updateCommands()
-                .addCommands(
-                        Commands.slash("register", "Contribute registering the teams"),
-                        Commands.slash("status-team", "Show the most winning compositions")
-
-
-                )
-                .queue();
+        return jda;
     }
 }

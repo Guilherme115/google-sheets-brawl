@@ -6,20 +6,33 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 @Component
 public class BotController extends ListenerAdapter {
 
-    private final ActionsBotService service;
+    private final ActionsBotService actionsBotService;
 
-    public BotController(ActionsBotService service) {
-        this.service = service;
+    // Construtor para injeção de dependência (melhor prática)
+    public BotController(ActionsBotService actionsBotService) {
+        this.actionsBotService = actionsBotService;
     }
 
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
-        String userID = event.getUser().getId();
-        String resposta = service.inicializateFlow(userID);
-        event.reply(resposta).queue();
+        String command = event.getName();
+
+        // Lógica para o comando /register
+        if (command.equals("register")) {
+            String userID = event.getUser().getId();
+            String resposta = actionsBotService.inicializateFlow(userID);
+            event.reply(resposta).queue();
+
+        } else if (command.equals("status-team")) {
+            event.deferReply().queue();
+            String teamName = Objects.requireNonNull(event.getOption("team_name")).getAsString();
+            actionsBotService.getTeamStatus(event, teamName);
+        }
     }
 
     @Override
@@ -28,8 +41,10 @@ public class BotController extends ListenerAdapter {
 
         String userID = event.getAuthor().getId();
         String msg = event.getMessage().getContentRaw();
-        String resposta = service.mainFlow(userID, msg);
-        event.getChannel().sendMessage(resposta).queue();
+        String resposta = actionsBotService.mainFlow(userID, msg);
 
+        if (resposta != null && !resposta.isEmpty()) {
+            event.getChannel().sendMessage(resposta).queue();
+        }
     }
 }
