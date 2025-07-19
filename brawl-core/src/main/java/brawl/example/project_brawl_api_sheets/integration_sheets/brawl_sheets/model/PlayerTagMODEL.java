@@ -1,4 +1,4 @@
-package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.entity;
+package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model;
 
 import jakarta.persistence.Id;
 import lombok.Data;
@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @Document(collection = "playersTags")
 @Data
-public class PlayerTagEntity {
+public class PlayerTagMODEL {
 
     @Id
     private String id;

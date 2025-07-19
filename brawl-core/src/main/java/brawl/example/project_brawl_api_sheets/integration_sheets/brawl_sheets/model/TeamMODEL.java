@@ -1,15 +1,29 @@
-
 package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model;
 
-
+import jakarta.persistence.*;
 import lombok.Data;
-import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.List;
 
 @Data
-@Component
+@Entity
 public class TeamMODEL {
-    private String teamName;
-    private List<String> playersTags;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String nameTeam;
+
+
+    @Enumerated(EnumType.STRING)
+    private TeamType teamType;
+
+
+    @ManyToOne
+    @JoinColumn(name = "battle_match_id")
+    private BattleMatch battle;
+
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PlayerPerformanceMODEL> players;
 }
