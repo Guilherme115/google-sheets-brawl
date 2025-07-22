@@ -1,4 +1,4 @@
-package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.entity;
+package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.repository;
 
 import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model.PlayerTagMODEL;
 import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.util.intern_structure.TeamPlayerTag;

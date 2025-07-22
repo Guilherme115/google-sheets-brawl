@@ -1,15 +1,20 @@
 package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import lombok.Data;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import java.util.ArrayList;
+import java.util.List;
 
-@Data
+@Getter
+@Setter
 @Entity
+@Table(name = "brawler_model")
 public class BrawlerMODEL {
 
-
     @Id
-    private String name;
-}
+    private String name; // O nome é o identificador único.
 
+    @OneToMany(mappedBy = "brawler", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PlayerPerformanceMODEL> performances = new ArrayList<>();
+}

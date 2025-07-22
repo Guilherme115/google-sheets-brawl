@@ -1,16 +1,16 @@
 package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.dto;
-import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 public class BattleLogReceiveDTO {
 
+
     @JsonProperty("items")
-    @Id
-    private long id;
     private List<BattleLogInfo> items;
 
 
@@ -19,18 +19,19 @@ public class BattleLogReceiveDTO {
     public static class BattleLogInfo {
         private String battleTime;
         private Battle battle;
-
     }
 
     @Data
     @NoArgsConstructor
     public static class Battle {
-        private String mode;
         private String id;
+        private String mode;
         private String type;
         private String result;
         private int duration;
         private List<List<Player>> teams;
+
+
     }
 
     @Data
@@ -45,6 +46,5 @@ public class BattleLogReceiveDTO {
     @NoArgsConstructor
     public static class Brawler {
         private String name;
-
     }
 }

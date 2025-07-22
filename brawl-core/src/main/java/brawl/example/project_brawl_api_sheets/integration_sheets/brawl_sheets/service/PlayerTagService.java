@@ -10,6 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 
@@ -66,19 +67,26 @@ public class PlayerTagService {
         return null;
     }
     public boolean isPlayerTagisValid(String tag) {
-        String raw = fetchRawJson(tag);
-
         try {
-            PlayerValidDTO player = parseJson(raw);
+            // Nós chamamos o método que faz a requisição diretamente aqui.
+            // Se a API retornar 404, a linha abaixo vai lançar a exceção.
+            fetchBattleLogFromApi(tag);
 
-            if (player.getTrophies() > 30000 || player.isQualifiedFromChampionshipChallenge() || NameOfPlayer(tag) != null) {
-                return true;
+            // Se a linha acima NÃO lançar uma exceção, significa que a API retornou
+            // um status de sucesso (2xx). Portanto, a tag existe e é válida.
+            return true;
 
-            }
-            return false;
+        } catch (HttpClientErrorException.NotFound e) {
+            // Se a exceção for especificamente "404 Not Found",
+            // significa que a tag não existe. Para nossa lógica, isso é uma
+            // validação bem-sucedida de que a tag é INVÁLIDA.
+            log.warn("Tag '{}' não encontrada na API do Brawl Stars (404). Considerada inválida.", tag);
+            return false; // A tag é inválida porque não foi encontrada.
 
         } catch (Exception e) {
-            log.warn("Falha ao validar tag: {}", tag, e);
+            // Para qualquer outro erro (403 Forbidden, 500, etc.),
+            // logamos o erro e também consideramos a validação como falha.
+            log.error("Erro inesperado ao validar a tag '{}'. Detalhes: {}", tag, e.getMessage());
             return false;
         }
     }
