@@ -1,6 +1,6 @@
 package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.service;
 
-import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.entity.PlayerTagRepository;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.repository.PlayerTagRepository;
 import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.dto.TeamWithPlayersRelationDTO;
 import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.util.intern_structure.TeamPlayerTag;
 import org.springframework.beans.factory.annotation.Autowired;
