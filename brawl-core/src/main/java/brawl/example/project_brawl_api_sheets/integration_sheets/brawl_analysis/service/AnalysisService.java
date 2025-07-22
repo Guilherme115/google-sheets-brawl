@@ -1,62 +1,51 @@
 package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_analysis.service;
 
 import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_analysis.dto.GeneralTeamInfo;
-import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.entity.Battle;
-import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.entity.TeamInfoBattle;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model.BattleMatch;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model.TeamMODEL;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.repository.BattleMatchRepository;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.repository.TeamRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class AnalysisService {
+    private final TeamRepository teamRepository;
 
-    private final RetrieveDataBase retrieveDataBase;
-
-
-    public AnalysisService(RetrieveDataBase retrieveDataBase) {
-        this.retrieveDataBase = retrieveDataBase;
+    public AnalysisService(TeamRepository teamRepository) {
+        this.teamRepository = teamRepository;
     }
 
+    public GeneralTeamInfo generalTeamInfo(String teamName) {
+        Optional<TeamMODEL> teamOpt = teamRepository.findByNameTeamWithBattles(teamName);
 
-    public GeneralTeamInfo fetchGeneralData(String teamName) {
-        List<TeamInfoBattle> allMatches = retrieveDataBase.getAllMatches();
+        if (teamOpt.isPresent()) {
+            TeamMODEL team = teamOpt.get();
+            List<BattleMatch> battles = team.getBattles();
 
-        if (allMatches != null && !allMatches.isEmpty()) {
+            GeneralTeamInfo info = new GeneralTeamInfo();
+            info.setTeamName(team.getNameTeam());
+            info.setNumberOfMatches(battles.size());
 
-            Optional<TeamInfoBattle> teamData = allMatches.stream()
-                    .filter(team -> teamName.equalsIgnoreCase(team.getTeamName()))
-                    .findFirst();
+            long victories = battles.stream()
+                    .filter(battle -> "victory".equalsIgnoreCase(battle.getResult()))
+                    .count();
 
-            if (teamData.isPresent()) {
-                TeamInfoBattle info = teamData.get();
+            info.setVictors(victories);
+            info.setNumberOfMatches(battles.size());
+            info.setWinrate(battles.isEmpty() ? 0.0 :
+                    (double) victories / battles.size() * 100);
 
-                long victories = info.getBattleList().stream()
-                        .filter(b -> "victory".equalsIgnoreCase(b.getResult()))
-                        .count();
-                int matches = info.getBattleList().size();
+            return info;
 
-                double winrate = (double) victories / matches;
-
-
-                GeneralTeamInfo generalInfo = new GeneralTeamInfo();
-                generalInfo.setTeamName(info.getTeamName());
-                generalInfo.setVictors(victories);
-                generalInfo.setNumberOfMatches(info.getBattleList() != null ? matches : 0);
-
-                return generalInfo;
-
-            } else {
-                System.out.println("Time não encontrado: " + teamName);
-                return null;
-            }
-        } else {
-            System.out.println("Nenhuma partida encontrada no banco.");
-            return null;
         }
+
+        return null;
     }
 }
-//}
+
+
