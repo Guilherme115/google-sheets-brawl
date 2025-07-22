@@ -19,7 +19,7 @@ public class SheetsConfig {
     private static final String APPLICATION_NAME = "Planilha do Capeta";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
-    @Value("${credential.json}")
+    @Value("${google.credentials.path}")
     private String CREDENTIALS_FILE_PATH;
 
     @Bean
