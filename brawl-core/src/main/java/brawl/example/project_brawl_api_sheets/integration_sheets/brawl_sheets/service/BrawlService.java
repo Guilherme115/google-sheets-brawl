@@ -1,182 +1,151 @@
 package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.service;
 
-import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.dto.TeamBattleDTO;
-import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model.BattleLog;
-import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model.TeamMODEL;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.dto.BattleLogReceiveDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.net.URI;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import org.springframework.web.client.RestTemplate;
 
 @Slf4j
 @Service
 public class BrawlService {
-    /*
-    A bilioteca ObjectMapper vai servir para converter objeto em json, e json em objeto.
-     */
+
     private final ObjectMapper mapper;
-    /*
-    - Alimentar uma api, tipo colocar uma url e pegar os dados em uma classe mdoel.
-    - Principal forma de abrir a conexao com a api.
-     */
     private final RestTemplate restTemplate;
-
-
-
-    /*
-    chave key em resouces
-     */
 
     @Value("${brawl.api.key}")
     private String apiToken;
-    /*
-     - É necessario verifcar se os eventos procedem como eventos competitivos de brawl stars
-     */
 
-    List<String> modos3x3 = Arrays.asList(
+    final List<String> modos3x3 = Arrays.asList(
             "brawlBall", "gemGrab", "bounty", "heist",
             "hotZone", "knockout", "siege", "wipeout"
     );
 
-    @Autowired
     public BrawlService(RestTemplate restTemplate, ObjectMapper mapper) {
         this.restTemplate = restTemplate;
         this.mapper = mapper;
     }
 
-    /*
-   Vou otimizar
-     -
+    /**
+     * Método principal para buscar o log de batalhas completo de um jogador.
+     * Retorna o DTO completo, sem filtros, pronto para ser salvo no banco.
      */
-
-    public TeamBattleDTO getTeams(String mainTag, TeamMODEL model) {
-        if (model == null) {
-            log.warn("Model é nulo. Não é possível continuar.");
+    public BattleLogReceiveDTO fetchPlayerBattleLog(String mainTag) {
+        String rawJson = fetchRawJson(mainTag);
+        if (rawJson == null) {
+            log.warn("Não foi possível obter o JSON para a tag {}", mainTag);
             return null;
         }
-
-        List<String> listaTags = model.getPlayersTags();
-        if (listaTags == null || listaTags.isEmpty() || listaTags.stream().allMatch(String::isBlank)) {
-            log.warn("Lista de tags é vazia ou inválida.");
-            return null;
-        }
-
-        if (listaTags.contains(mainTag)) {
-            String nomeEquipe = model.getTeamName();
-            List<BattleLog.BattleLogInfo> partidas = getFilteredBattleLogs(
-                    mainTag,
-                    is3v3AndFriendlyMatchAndContainsAllPlayer(listaTags)
-            );
-            return new TeamBattleDTO(nomeEquipe, partidas);
-        } else {
-            log.error("Não foi possível encontrar a equipe para a tag principal '{}'. Verifique a lógica de negócio.", mainTag);
-            return null;
-        }
+        return parseJson(rawJson);
     }
 
-
-    /*
-    Aqui vamos filtrar as batalhas com base no
+    /**
+     * Recebe um log de batalha completo e aplica os filtros de negócio (3v3, tipo, etc.).
+     * Retorna uma lista de batalhas filtradas, prontas para a planilha.
      */
-
-    private List<BattleLog.BattleLogInfo> getFilteredBattleLogs(String playerTag, Predicate<BattleLog.BattleLogInfo>... filters) {
-
-        String rawJson = fetchRawJson(playerTag);
-        BattleLog model = parseJson(rawJson);
-
-        if (model == null || model.getItems() == null) {
-            log.warn("Modelo nulo ou sem items");
+    public List<BattleLogReceiveDTO.BattleLogInfo> filterTeamBattles(BattleLogReceiveDTO battleLog, List<String> teamTags) {
+        if (battleLog == null || battleLog.getItems() == null) {
             return Collections.emptyList();
         }
 
-        Predicate<BattleLog.BattleLogInfo> combined = Arrays.stream(filters)
-                .reduce(x -> true, Predicate::and);
+        Predicate<BattleLogReceiveDTO.BattleLogInfo> filters = getBattleFilters(teamTags);
 
-        return model.getItems().stream()
-                .filter(combined)
+        return battleLog.getItems().stream()
+                .filter(filters)
                 .collect(Collectors.toList());
     }
 
 
-    private ResponseEntity<String> fetchBattleLogFromApi(String mainTag) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + apiToken);
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-
-        String url = "https://api.brawlstars.com/v1/players/%23" + mainTag + "/battlelog";
-        URI uri = URI.create(url);
-
-        return restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
-    }
-
     private String fetchRawJson(String mainTag) {
-        ResponseEntity<String> response = fetchBattleLogFromApi(mainTag);
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + apiToken);
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+            String url = "https://api.brawlstars.com/v1/players/%23" + mainTag.replace("#", "") + "/battlelog";
+            URI uri = URI.create(url);
 
-        if (!response.getStatusCode().is2xxSuccessful()) {
-            log.error("Erro ao chamar API do Brawl: status {}", response.getStatusCode());
-            throw new RuntimeException("Erro ao buscar dados do Brawl API");
+            ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
+
+            return response.getBody();
+        } catch (HttpClientErrorException e) {
+            log.error("Erro HTTP ao chamar API do Brawl para a tag {}: {} - {}", mainTag, e.getStatusCode(), e.getResponseBodyAsString());
+            return null;
+        } catch (Exception e) {
+            log.error("Falha genérica na chamada da API do Brawl para a tag {}", mainTag, e);
+            return null;
         }
-
-        return response.getBody();
     }
 
-    private BattleLog parseJson(String json) {
+    private BattleLogReceiveDTO parseJson(String json) {
+        if (json == null) return null;
         try {
-            BattleLog model = mapper.readValue(json, BattleLog.class);
+            BattleLogReceiveDTO model = mapper.readValue(json, BattleLogReceiveDTO.class);
             log.info("JSON desserializado com sucesso. Quantidade de items: {}",
                     model.getItems() != null ? model.getItems().size() : 0);
             return model;
         } catch (JsonProcessingException e) {
             log.error("Erro ao desserializar JSON", e);
-            throw new RuntimeException("Erro ao desserializar JSON", e);
+            return null;
         }
     }
 
-    private Predicate<BattleLog.BattleLogInfo> is3v3Match() {
+    private Predicate<BattleLogReceiveDTO.BattleLogInfo> getBattleFilters(List<String> tags) {
+        return is3v3Match()
+                .and(isAllowedMatchType())
+                .and(isTeamPresent(tags));
+    }
+
+    private Predicate<BattleLogReceiveDTO.BattleLogInfo> is3v3Match() {
         return item -> item != null &&
                 item.getBattle() != null &&
                 modos3x3.contains(item.getBattle().getMode());
     }
 
-    private Predicate<BattleLog.BattleLogInfo> isFriendlyMatch() {
-        return item -> item != null &&
-                item.getBattle() != null &&
-                "friendly".equalsIgnoreCase(item.getBattle().getType());
-    }
-
-    private Predicate<BattleLog.BattleLogInfo> is3v3AndFriendlyMatchAndContainsAllPlayer(List<String> tags) {
-        return is3v3Match().and(isFriendlyMatch().and(isTeamPresent(tags)));
-
-    }
-
-
-    private Predicate<BattleLog.BattleLogInfo> isTeamPresent(List<String> tags) {
-        return battleLogInfo -> {
-            List<List<BattleLog.Player>> teams = battleLogInfo.getBattle().getTeams();
-
-            for (List<BattleLog.Player> team : teams) {
-                List<String> playerTags = team.stream()
-                        .map(p -> p.getTag().replace("#", ""))
-                        .collect(Collectors.toList());
-
-                if (playerTags.containsAll(tags)) {
-                    return true;
-                }
+    private Predicate<BattleLogReceiveDTO.BattleLogInfo> isAllowedMatchType() {
+        final Set<String> allowedTypes = Set.of("friendly", "tournament");
+        return item -> {
+            if (item == null || item.getBattle() == null || item.getBattle().getType() == null) {
+                return false;
             }
-
-            return false;
+            return allowedTypes.contains(item.getBattle().getType().toLowerCase());
         };
     }
 
-}
+    private Predicate<BattleLogReceiveDTO.BattleLogInfo> isTeamPresent(List<String> registeredTeamTags) {
+        final Set<String> ourTeamTags = registeredTeamTags.stream()
+                .map(tag -> tag.replace("#", ""))
+                .collect(Collectors.toSet());
 
+        return battleLogInfo -> {
+            if (battleLogInfo == null || battleLogInfo.getBattle() == null || battleLogInfo.getBattle().getTeams() == null) {
+                return false;
+            }
+            List<List<BattleLogReceiveDTO.Player>> teamsInBattle = battleLogInfo.getBattle().getTeams();
+            for (List<BattleLogReceiveDTO.Player> teamInBattle : teamsInBattle) {
+                long matchingPlayers = teamInBattle.stream()
+                        .map(player -> player.getTag().replace("#", ""))
+                        .filter(ourTeamTags::contains)
+                        .count();
+                if (matchingPlayers >= 2) {
+                    return true;
+                }
+            }
+            return false;
+        };
+    }
+}
