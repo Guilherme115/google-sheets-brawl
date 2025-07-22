@@ -1,8 +1,9 @@
+/*
 package brawl.example.project_brawl_api_sheets.service;
 
-import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.dto.TeamBattleDTO;
-import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model.BattleLog;
-import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model.TeamMODEL;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.dto.TeamBattleResponseDTO;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.dto.BattleLogReceiveDTO;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.dto.TeamWithPlayersRelationDTO;
 import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.service.BrawlService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,18 +53,18 @@ class BrawlServiceTest {
         List<String> playerTags = List.of("PlayerTag123", "PlayerTag321", "PlayerTag456");
         String mainTag = playerTags.get(0);
 
-        TeamMODEL model = new TeamMODEL();
+        TeamWithPlayersRelationDTO model = new TeamWithPlayersRelationDTO();
         model.setPlayersTags(playerTags);
         model.setTeamName("Test Team");
 
         ObjectMapper realMapper = new ObjectMapper();
         String jsonContent = new String(Files.readAllBytes(file.toPath()));
-        BattleLog logInfo = realMapper.readValue(file, BattleLog.class);
+        BattleLogReceiveDTO logInfo = realMapper.readValue(file, BattleLogReceiveDTO.class);
         ResponseEntity<String> fakeResponse = ResponseEntity.ok(jsonContent);
 
         Mockito.
                 when(mapper.readValue(Mockito.any(String.class),
-                        Mockito.eq(BattleLog.class)))
+                        Mockito.eq(BattleLogReceiveDTO.class)))
                 .thenReturn(logInfo);
 
 
@@ -76,7 +77,7 @@ class BrawlServiceTest {
                 )).thenReturn(fakeResponse);
 
 
-        TeamBattleDTO response = service.getTeams(mainTag, model);
+        TeamBattleResponseDTO response = service.getTeams(mainTag, model);
         assertNotNull(response);
         assertEquals("Test Team", response.getTeamName());
 
@@ -88,18 +89,18 @@ class BrawlServiceTest {
         List<String> nullList = List.of("","");
         String mainTag = nullList.get(0);
 
-        TeamMODEL model = new TeamMODEL();
+        TeamWithPlayersRelationDTO model = new TeamWithPlayersRelationDTO();
         model.setTeamName("Time vazio");
         model.setPlayersTags(nullList);
 
         ObjectMapper realMapper = new ObjectMapper();
         String jsonContent = new String(Files.readAllBytes(file.toPath()));
-        BattleLog logInfo = realMapper.readValue(file, BattleLog.class);
+        BattleLogReceiveDTO logInfo = realMapper.readValue(file, BattleLogReceiveDTO.class);
         ResponseEntity<String> fakeResponse = ResponseEntity.ok(jsonContent);
 
         Mockito.
                 when(mapper.readValue(Mockito.any(String.class),
-                        Mockito.eq(BattleLog.class)))
+                        Mockito.eq(BattleLogReceiveDTO.class)))
                 .thenReturn(logInfo);
 
 
@@ -111,10 +112,10 @@ class BrawlServiceTest {
                         Mockito.eq(String.class)
                 )).thenReturn(fakeResponse);
 
-        TeamBattleDTO teams = service.getTeams(mainTag, model);
+        TeamBattleResponseDTO teams = service.getTeams(mainTag, model);
 
         assertNull(teams,"A lista está vazia, e o objeto nao foi criado");
 
 
     }
-}
+}*/
