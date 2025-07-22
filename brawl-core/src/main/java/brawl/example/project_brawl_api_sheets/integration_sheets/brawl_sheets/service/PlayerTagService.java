@@ -68,24 +68,19 @@ public class PlayerTagService {
     }
     public boolean isPlayerTagisValid(String tag) {
         try {
-            // Nós chamamos o método que faz a requisição diretamente aqui.
-            // Se a API retornar 404, a linha abaixo vai lançar a exceção.
+
             fetchBattleLogFromApi(tag);
 
-            // Se a linha acima NÃO lançar uma exceção, significa que a API retornou
-            // um status de sucesso (2xx). Portanto, a tag existe e é válida.
+
             return true;
 
         } catch (HttpClientErrorException.NotFound e) {
-            // Se a exceção for especificamente "404 Not Found",
-            // significa que a tag não existe. Para nossa lógica, isso é uma
-            // validação bem-sucedida de que a tag é INVÁLIDA.
+
             log.warn("Tag '{}' não encontrada na API do Brawl Stars (404). Considerada inválida.", tag);
             return false; // A tag é inválida porque não foi encontrada.
 
         } catch (Exception e) {
-            // Para qualquer outro erro (403 Forbidden, 500, etc.),
-            // logamos o erro e também consideramos a validação como falha.
+
             log.error("Erro inesperado ao validar a tag '{}'. Detalhes: {}", tag, e.getMessage());
             return false;
         }

@@ -18,12 +18,10 @@ public class RegistrationService {
 
     public String processRegistration(String discordId, String teamName, List<String> playerTags) {
 
-        // 1. Validar nome do time
         if (playerTagRepository.existsByTeamName(teamName)) {
             return "O nome de time '" + teamName + "' já está registrado.";
         }
 
-        // 2. Validar cada tag
         for (String tag : playerTags) {
             if (!tagService.isPlayerTagisValid(tag)) {
                 return "A tag '" + tag + "' é inválida.";

@@ -19,24 +19,20 @@ import java.util.stream.Collectors;
 public class BotListener extends ListenerAdapter {
 
     private final CommandManager commandManager;
-    private final RegistrationService registrationService; // Injetar o serviço
-
+    private final RegistrationService registrationService;
     public BotListener(CommandManager commandManager, RegistrationService registrationService) {
         this.commandManager = commandManager;
         this.registrationService = registrationService;
     }
 
-    // Registra os comandos no Discord quando o bot fica online
     @Override
     public void onReady(ReadyEvent event) {
         event.getJDA().updateCommands().addCommands(
                 commandManager.getAllCommands().stream()
                         .map(cmd -> {
-                            // Cria o comando básico
                             var commandData = Commands.slash(cmd.getName(), cmd.getDescription());
 
-                            // Adiciona as opções que o comando possa ter
-                            var options = cmd.getOptions(); // Supondo que este método exista
+                            var options = cmd.getOptions();
                             if (options != null && !options.isEmpty()) {
                                 commandData.addOptions(options);
                             }
@@ -47,17 +43,15 @@ public class BotListener extends ListenerAdapter {
         ).queue();
     }
 
-    // Delega a execução para o CommandManager
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         commandManager.handle(event);
     }
 
-    // Lida com a submissão do nosso Modal de registro
     @Override
     public void onModalInteraction(ModalInteractionEvent event) {
         if (event.getModalId().equals("registration-modal")) {
-            event.deferReply(true).queue(); // Responde de forma "ephemeral" (só o usuário vê)
+            event.deferReply(true).queue();
 
             String teamName = event.getValue("team-name").getAsString();
 
@@ -73,7 +67,6 @@ public class BotListener extends ListenerAdapter {
             String discordId = event.getUser().getId();
             String response = registrationService.processRegistration(discordId, teamName, tags);
 
-            // Envia o resultado final para o usuário
             event.getHook().sendMessage(response).queue();
         }
     }

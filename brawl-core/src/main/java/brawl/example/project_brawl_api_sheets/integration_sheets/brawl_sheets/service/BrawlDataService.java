@@ -48,7 +48,6 @@ public class BrawlDataService {
 
         log.info("Iniciando processamento de {} batalhas para a equipe '{}'.", battleLogDTO.getItems().size(), teamInfo.getTeamName());
 
-        // ... (lógica de coleta e busca em lote permanece a mesma)
         Set<String> allPlayerTags = battleLogDTO.getItems().stream()
                 .flatMap(info -> info.getBattle().getTeams().stream())
                 .flatMap(List::stream)
@@ -71,7 +70,6 @@ public class BrawlDataService {
                 .map(tag -> tag.replace("#", ""))
                 .collect(Collectors.toSet());
 
-        // --- Processamento Principal ---
         for (BattleLogReceiveDTO.BattleLogInfo battleInfo : battleLogDTO.getItems()) {
             String battleTime = battleInfo.getBattleTime();
             if (battleMatchRepository.existsByBattleTime(battleTime)) {
@@ -94,12 +92,10 @@ public class BrawlDataService {
                     teamToSave.setNameTeam("Oponente");
                 }
 
-                // CORREÇÃO 1: Usamos uma nova variável final para o time salvo
                 final TeamMODEL savedTeam = teamRepository.save(teamToSave);
 
                 savedTeam.getBattles().add(battleMatch);
 
-                // Agora usamos a 'savedTeam' que é efetivamente final
                 List<PlayerPerformanceMODEL> performances = teamData.stream()
                         .map(playerData -> createPlayerPerformance(playerData, savedTeam, existingPlayers, existingBrawlers))
                         .collect(Collectors.toList());
@@ -110,7 +106,6 @@ public class BrawlDataService {
         log.info("Processadas e salvas com sucesso {} batalhas.", battleLogDTO.getItems().size());
     }
 
-    // ... (resto da classe permanece o mesmo)
     private PlayerMODEL findOrCreatePlayer(String tag, String name, Map<String, PlayerMODEL> cache) {
         String cleanedTag = tag.replace("#", "");
         return cache.computeIfAbsent(cleanedTag, t -> {

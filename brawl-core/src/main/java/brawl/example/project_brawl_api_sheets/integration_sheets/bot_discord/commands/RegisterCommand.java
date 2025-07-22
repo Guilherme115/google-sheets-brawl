@@ -22,7 +22,6 @@ public class RegisterCommand implements ICommand {
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-        // Cria os campos de texto para o nosso formulário (Modal)
         TextInput teamName = TextInput.create("team-name", "Nome do Time", TextInputStyle.SHORT)
                 .setPlaceholder("Insira o nome do time")
                 .setRequired(true)
@@ -45,15 +44,13 @@ public class RegisterCommand implements ICommand {
 
         TextInput player4 = TextInput.create("player-4", "Tag do Jogador #4 (Opcional)", TextInputStyle.SHORT)
                 .setPlaceholder("#ABC12345")
-                .setRequired(false) // Este é opcional
+                .setRequired(false)
                 .build();
 
-        // Cria o Modal (o pop-up) com um ID único e um título
         Modal modal = Modal.create("registration-modal", "Registro de Time")
                 .addComponents(ActionRow.of(teamName), ActionRow.of(player1), ActionRow.of(player2), ActionRow.of(player3), ActionRow.of(player4))
                 .build();
 
-        // Responde ao usuário mostrando o Modal
         event.replyModal(modal).queue();
     }
 }

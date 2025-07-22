@@ -35,7 +35,6 @@ public class StatusTeamCommand implements ICommand {
         return "Mostra as estatísticas de desempenho de um time.";
     }
 
-    // Precisamos definir as opções que o comando aceita
     @Override
     public List<OptionData> getOptions() {
         return Collections.singletonList(
@@ -45,18 +44,14 @@ public class StatusTeamCommand implements ICommand {
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-        // Pega o nome do time que o usuário digitou na opção do comando
         String teamName = Objects.requireNonNull(event.getOption("team_name")).getAsString();
 
-        event.deferReply().queue(); // Informa ao Discord que a resposta pode demorar um pouco
+        event.deferReply().queue();
 
-        // 1. Pega os dados brutos do serviço de análise
         GeneralTeamInfo teamInfo = analysisService.generalTeamInfo(teamName);
 
-        // 2. Transforma os dados em um Embed bonito
         MessageEmbed embed = embedService.createTeamAnalysisEmbed(teamInfo);
 
-        // 3. Envia o embed como resposta
         event.getHook().sendMessageEmbeds(embed).queue();
     }
 }

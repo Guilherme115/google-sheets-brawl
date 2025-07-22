@@ -12,7 +12,6 @@ public class CommandManager {
 
     private final Map<String, ICommand> commands = new HashMap<>();
 
-    // O Spring vai injetar todas as classes que implementam ICommand aqui! 🚀
     public CommandManager(Collection<ICommand> commands) {
         for (ICommand command : commands) {
             this.commands.put(command.getName(), command);

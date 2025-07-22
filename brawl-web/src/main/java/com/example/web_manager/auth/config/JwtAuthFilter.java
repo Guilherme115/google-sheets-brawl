@@ -40,9 +40,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if (jwtUtil.validateToken(jwt)) {
             String userId = jwtUtil.extractUserId(jwt);
 
-            // Se o usuário ainda não está autenticado nesta requisição
             if (SecurityContextHolder.getContext().getAuthentication() == null) {
-                // Criamos um UserDetails simples. Em um sistema real, você buscaria o usuário do banco.
                 UserDetails userDetails = new User(userId, "", new ArrayList<>());
 
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
@@ -52,7 +50,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 );
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                // Define o usuário como autenticado
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }

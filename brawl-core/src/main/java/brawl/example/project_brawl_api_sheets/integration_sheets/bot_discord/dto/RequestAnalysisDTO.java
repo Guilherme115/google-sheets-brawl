@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 @Component
 @Data
 public class RequestAnalysisDTO {
-    //metodo pra testar primeiro
     private String TeamName;
 
 

@@ -22,10 +22,9 @@ public class BattleMatch {
         private String result;
         private int duration;
 
-        // UMA Batalha tem MUITOS Times
         @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
         @JoinTable(
-                name = "battle_teams", // Nome da tabela de junção
+                name = "battle_teams",
                 joinColumns = @JoinColumn(name = "battle_match_id"), // Coluna que referencia BattleMatch
                 inverseJoinColumns = @JoinColumn(name = "team_model_id") // Coluna que referencia TeamMODEL
         )

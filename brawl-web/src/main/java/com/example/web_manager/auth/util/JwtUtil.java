@@ -16,9 +16,8 @@ import java.util.Date;
 public class JwtUtil {
 
     private final Key key;
-    private final long expiration = 1000 * 60 * 60 * 24; // Aumentado para 24 horas
+    private final long expiration = 1000 * 60 * 60 * 24;
 
-    // Injeta a chave secreta do application.properties
     public JwtUtil(@Value("${jwt.secret}") String secret) {
         byte[] keyBytes = Decoders.BASE64.decode(secret);
         this.key = Keys.hmacShaKeyFor(keyBytes);
@@ -26,9 +25,8 @@ public class JwtUtil {
 
     public String generateToken(OAuth2User user) {
         return Jwts.builder()
-                .setSubject(user.getAttribute("id")) // Usar o ID do Discord como subject é mais robusto
-                .claim("username", user.getAttribute("username")) // Adiciona o username como um "claim"
-                .setIssuedAt(new Date())
+                .setSubject(user.getAttribute("id"))
+                .claim("username", user.getAttribute("username"))
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(key)
                 .compact();

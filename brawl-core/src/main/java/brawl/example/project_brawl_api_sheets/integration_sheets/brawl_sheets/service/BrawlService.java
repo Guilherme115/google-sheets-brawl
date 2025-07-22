@@ -54,10 +54,7 @@ public class BrawlService {
         return parseJson(rawJson);
     }
 
-    /**
-     * Recebe um log de batalha completo e aplica os filtros de negócio (3v3, tipo, etc.).
-     * Retorna uma lista de batalhas filtradas, prontas para a planilha.
-     */
+
     public List<BattleLogReceiveDTO.BattleLogInfo> filterTeamBattles(BattleLogReceiveDTO battleLog, List<String> teamTags) {
         if (battleLog == null || battleLog.getItems() == null) {
             return Collections.emptyList();
