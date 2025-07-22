@@ -1,5 +1,6 @@
 package brawl.example.project_brawl_api_sheets.integration_sheets.bot_discord.config;
 
+import brawl.example.project_brawl_api_sheets.integration_sheets.bot_discord.listenner.BotListener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -13,23 +14,17 @@ import java.util.EventListener;
 
 @Configuration
 public class BotDiscordAPIConfig {
+
     @Value("${discord.api.key}")
     private String key;
 
     @Autowired
-    private EventListener eventListener;
+    private BotListener botListener;
 
     @Bean
-    public JDA jda() throws InterruptedException {
-        JDA jda = JDABuilder.createDefault(key)
-                .addEventListeners(eventListener)
-                .build().awaitReady();
-        jda.updateCommands().addCommands(
-                Commands.slash("register", "iniciar o processo de cadastro"),
-                Commands.slash("status-team", "Verifica o status de um time")
-                        .addOption(OptionType.STRING, "team_name", "O nome do time que deseja ver o status", true)
-        ).queue();
-
-        return jda;
+    public JDA jda() {
+        return JDABuilder.createDefault(key)
+                .addEventListeners(botListener)
+                .build();
     }
 }
