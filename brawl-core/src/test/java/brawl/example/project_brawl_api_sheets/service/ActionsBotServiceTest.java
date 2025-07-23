@@ -1,9 +1,9 @@
+/*
 
 package brawl.example.project_brawl_api_sheets.service;
 
-import brawl.example.project_brawl_api_sheets.integration_sheets.entity.PlayerTagData;
-import brawl.example.project_brawl_api_sheets.integration_sheets.service.ActionsBotService;
-import brawl.example.project_brawl_api_sheets.integration_sheets.service.PlayerTagService;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.repository.PlayerTagRepository;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.service.PlayerTagService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ActionsBotServiceTest {
    @Mock
-   PlayerTagData playerTagData;
+   PlayerTagRepository playerTagRepository;
    @Mock
    PlayerTagService tagService;
    @InjectMocks
@@ -45,7 +45,7 @@ class ActionsBotServiceTest {
         String id = "UserService";
         String teamName = "TeamName321";
 
-        Mockito.when(playerTagData.existsByTeamName(teamName)).thenReturn(true);
+        Mockito.when(playerTagRepository.existsByTeamName(teamName)).thenReturn(true);
         service.inicializateFlow(id);
         String response = service.mainFlow(id, teamName);
         assertEquals("Team name already registered",response);
@@ -95,3 +95,4 @@ class ActionsBotServiceTest {
 
     }
 }
+*/

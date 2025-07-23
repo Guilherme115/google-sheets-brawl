@@ -1,28 +1,44 @@
-brawl-tracker-sheets-web/HELP.md
-target/
+# ===================================================================
+# ARQUIVOS DE SEGREDOS E CREDENCIAIS
+# Nunca comite segredos ou chaves de API no repositório.
+# ===================================================================
+# Arquivo de variáveis de ambiente locais
+.env
+
+# Chave de serviço do Google Cloud (substitua pelo nome do seu arquivo se for diferente)
+planar-alliance-460322-s9-b4ef8b49b442.json
+
+# ===================================================================
+# DEPENDÊNCIAS E ARQUIVOS DE BUILD
+# Ignora pastas de output de compilação e dependências locais.
+# ===================================================================
+/target/
+/build/
 !.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
-core/src/main/resources/planar-alliance-460322-s9-b4ef8b49b442.json
-brawl-core/src/main/resources/application.properties
-src/main/resources/application.properties
 
+# ===================================================================
+# ARQUIVOS DE LOG
+# ===================================================================
+*.log
+*.log.gz
 
+# ===================================================================
+# ARQUIVOS ESPECÍFICOS DE IDEs
+# ===================================================================
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
 
-### STS ###
+### Spring Tools Suite (STS) / Eclipse ###
 .apt_generated
 .classpath
 .factorypath
 .project
-.settings
+.settings/
 .springBeans
-.sts4-cache
-
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
+.sts4-cache/
 
 ### NetBeans ###
 /nbproject/private/
@@ -30,10 +46,12 @@ src/main/resources/application.properties
 /dist/
 /nbdist/
 /.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
 
 ### VS Code ###
 .vscode/
 
+# ===================================================================
+# ARQUIVOS DE SISTEMA OPERACIONAL
+# ===================================================================
+.DS_Store
+Thumbs.db

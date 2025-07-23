@@ -3,27 +3,36 @@ package com.example.web_manager.auth.util;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.stereotype.Component;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
 
 @Component
 public class JwtUtil {
-    private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS384);
-private final long expiration = 1000 * 60 * 60;
 
-    public String generateToken(String username) {
+    private final Key key;
+    private final long expiration = 1000 * 60 * 60 * 24;
+
+    public JwtUtil(@Value("${jwt.secret}") String secret) {
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
+        this.key = Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    public String generateToken(OAuth2User user) {
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(user.getAttribute("id"))
+                .claim("username", user.getAttribute("username"))
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(key)
                 .compact();
-
     }
 
-    public String extractUserName (String token) {
+    public String extractUserId(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
@@ -39,8 +48,7 @@ private final long expiration = 1000 * 60 * 60;
                     .build()
                     .parseClaimsJws(token);
             return true;
-        }
-        catch (JwtException | IllegalArgumentException e) {
+        } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
     }

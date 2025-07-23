@@ -1,0 +1,106 @@
+services:
+  # ===============================================
+  # SERVIÇOS DE INFRAESTRUTURA
+  # ===============================================
+  mysql-db:
+    image: mysql:8.0
+    container_name: brawl_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_BRAWL_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  mongo-db:
+    image: mongo:6.0
+    container_name: brawl_mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  redis-cache:
+    image: redis:7
+    container_name: brawl_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  # ===============================================
+  # SERVIÇOS DAS SUAS APLICAÇÕES
+  # ===============================================
+  brawl-core-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE_PATH: brawl-core
+    container_name: brawl_core_app
+    restart: always
+    ports:
+      - "8080:8080"
+    volumes:
+      # CORREÇÃO: Caminho direto e correto do Google Credentials
+      - ./config/secrets/planar-alliance-460322-s9-b4ef8b49b442.json:/app/config/google-credentials.json:ro
+    environment:
+      - SERVER_PORT=8080
+      - DB_HOST=mysql-db
+      - DB_PORT=3306
+      - DB_NAME=${DB_BRAWL_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - MONGO_HOST=mongo-db
+      - MONGO_PORT=27017
+      - MONGO_USER=${MONGO_USER}
+      - MONGO_PASSWORD=${MONGO_PASSWORD}
+      - MONGO_DB_NAME=${MONGO_DB_NAME}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - BRAWL_API_KEY=${BRAWL_API_KEY}
+      - DISCORD_API_KEY=${DISCORD_API_KEY}
+      - GOOGLE_SHEETS_ID=1_1ASBHoRrgAYMoEyAg7O5wgOweHNgKlN9FypMmtNcmc
+      # CORREÇÃO: Caminho correto dentro do container
+      - GOOGLE_CREDENTIALS_PATH_CONTAINER=/app/config/google-credentials.json
+    depends_on:
+      - mysql-db
+      - mongo-db
+      - redis-cache
+
+  user-manager-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE_PATH: brawl-web
+    container_name: user_manager_app
+    restart: always
+    ports:
+      - "8181:8081"
+    environment:
+      - SERVER_PORT=8081
+      - DB_HOST=mysql-db
+      - DB_PORT=3306
+      - DB_NAME=${DB_USERMANAGE_NAME}
+      - DB_USER=root
+      - DB_PASSWORD=${DB_ROOT_PASSWORD}
+      - DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID}
+      - DISCORD_CLIENT_SECRET=${DISCORD_CLIENT_SECRET}
+      - JWT_SECRET=${JWT_SECRET}
+    depends_on:
+      - mysql-db
+
+volumes:
+  mysql_data:
+  mongo_data:
+  redis_data:

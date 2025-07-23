@@ -1,0 +1,7 @@
+package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model;
+
+public enum TeamType {
+    MY_TEAM,
+    ENEMY_TEAM
+}
+
