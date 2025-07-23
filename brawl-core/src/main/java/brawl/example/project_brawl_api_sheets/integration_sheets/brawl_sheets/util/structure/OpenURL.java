@@ -10,3 +10,4 @@ public class OpenURL {
         return new RestTemplate();
     }
 }
+
