@@ -9,23 +9,22 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "team_model")
-public class TeamMODEL {
+@Table(name = "match_teams")
+public class MatchTeamMODEL {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nameTeam;
+    private String nameTeam; // Nome do time na partida (ex: "SUP E-sports" ou "Oponente")
 
     @Enumerated(EnumType.STRING)
-    private TeamType teamType;
+    private TeamType teamType; // Se é MY_TEAM ou ENEMY_TEAM
 
-    // UM Time pode ter MUITAS Batalhas
-    // "mappedBy = "teams"" diz ao Hibernate: "A configuração desta relação já foi feita
-    // no campo 'teams' da classe BattleMatch. Apenas use aquela configuração."
-    @ManyToMany(mappedBy = "teams")
-    private List<BattleMatch> battles = new ArrayList<>();
+    // RELAÇÃO CORRIGIDA: Uma escalação de time pertence a UMA partida
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "battle_match_id", nullable = false)
+    private BattleMatch battle;
 
     @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PlayerPerformanceMODEL> players = new ArrayList<>();

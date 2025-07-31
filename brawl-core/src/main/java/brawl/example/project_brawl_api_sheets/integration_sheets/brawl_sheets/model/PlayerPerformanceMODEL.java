@@ -15,8 +15,8 @@ public class PlayerPerformanceMODEL {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "team_id", nullable = false)
-    private TeamMODEL team;
+    @JoinColumn(name = "match_team_id", nullable = false)
+    private MatchTeamMODEL team; // <-- RELAÇÃO CORRIGIDA
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "player_tag", nullable = false)
