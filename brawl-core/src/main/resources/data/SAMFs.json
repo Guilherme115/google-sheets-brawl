@@ -1,0 +1,164 @@
+{
+    "participant": [
+        {
+            "id": "28d45c3c-5aa5-11f0-83ca-76adfd113985",
+            "tournament_id": 0,
+            "name": "LOUD",
+            "players": [
+                {
+                    "name": "LOUD|KaioDog",
+                    "gamerTag": "#GGUQCG0G"
+                },
+                {
+                    "name": "LOUD|Edinho",
+                    "gamerTag": "#QJULVGU"
+                },
+                {
+                    "name": "LOUD|FireCrow",
+                    "gamerTag": "#JQ8LLLY"
+                }
+            ],
+            "img": "https://raw.githubusercontent.com/idouab/bsc-2025-raw/main/logos/LOUD.png"
+        },
+        {
+            "id": "28d5bd0c-5aa5-11f0-8440-76adfd113985",
+            "tournament_id": 0,
+            "name": "Enosis",
+            "players": [
+                {
+                    "name": "Murilin 🦦",
+                    "gamerTag": "#98L2G2UP9"
+                },
+                {
+                    "name": "ENO|Neefex",
+                    "gamerTag": "#2VYUY0GL8"
+                },
+                {
+                    "name": "ENO|Studio",
+                    "gamerTag": "#8QRQCQUG"
+                }
+            ],
+            "img": "https://raw.githubusercontent.com/idouab/bsc-2025-raw/main/logos/default.png"
+        },
+        {
+            "id": "28d375b0-5aa5-11f0-a378-76adfd113985",
+            "tournament_id": 0,
+            "name": "Fênix",
+            "players": [
+                {
+                    "name": "FX|CaueBr",
+                    "gamerTag": "#JQ8L0YYL"
+                },
+                {
+                    "name": "FX|Wesley",
+                    "gamerTag": "#PLLRJC2V"
+                },
+                {
+                    "name": "REI DO FUT",
+                    "gamerTag": "#RVL0RPR9"
+                }
+            ],
+            "img": "https://raw.githubusercontent.com/idouab/bsc-2025-raw/main/logos/default.png"
+        },
+        {
+            "id": "28d53e54-5aa5-11f0-9014-76adfd113985",
+            "tournament_id": 0,
+            "name": "Alpha7 Esports",
+            "players": [
+                {
+                    "name": "A7|BrabaoBS",
+                    "gamerTag": "#L9PQUV0YC"
+                },
+                {
+                    "name": "Golden💘Mai",
+                    "gamerTag": "#9QCJPL20"
+                },
+                {
+                    "name": "A7|IceCrow",
+                    "gamerTag": "#9CPYUCGQC"
+                }
+            ],
+            "img": "https://raw.githubusercontent.com/idouab/bsc-2025-raw/main/logos/Alpha7 Esports.png"
+        },
+        {
+            "id": "28d4cabe-5aa5-11f0-8073-76adfd113985",
+            "tournament_id": 0,
+            "name": "BC* Gaming SA",
+            "players": [
+                {
+                    "name": "BC*|Loko",
+                    "gamerTag": "#YQLP8LP8"
+                },
+                {
+                    "name": "BC*|Derrp",
+                    "gamerTag": "#2QG9LQQC8Y"
+                },
+                {
+                    "name": "BC*|Jubileubr",
+                    "gamerTag": "#GVYLVUGR"
+                }
+            ],
+            "img": "https://raw.githubusercontent.com/idouab/bsc-2025-raw/main/logos/BC* Gaming SA.png"
+        },
+        {
+            "id": "28d2523e-5aa5-11f0-9f91-76adfd113985",
+            "tournament_id": 0,
+            "name": "Dropeados F/A",
+            "players": [
+                {
+                    "name": "DP|Portox",
+                    "gamerTag": "#YGQYGCR"
+                },
+                {
+                    "name": "Bast🍥",
+                    "gamerTag": "#2CJ0RCJ"
+                },
+                {
+                    "name": "DP|Bryan",
+                    "gamerTag": "#9JYG98GG"
+                }
+            ],
+            "img": "https://raw.githubusercontent.com/idouab/bsc-2025-raw/main/logos/default.png"
+        },
+        {
+            "id": "28d3e25c-5aa5-11f0-93e9-76adfd113985",
+            "tournament_id": 0,
+            "name": "CASA BRAWL",
+            "players": [
+                {
+                    "name": "CASA|Mohtep",
+                    "gamerTag": "#R2LR2QLG"
+                },
+                {
+                    "name": "CASA|Pekka",
+                    "gamerTag": "#JVRCVJ9Q"
+                },
+                {
+                    "name": "CASA|Doritos",
+                    "gamerTag": "#202GJJR28"
+                }
+            ],
+            "img": "https://raw.githubusercontent.com/idouab/bsc-2025-raw/main/logos/CASA BRAWL.png"
+        },
+        {
+            "id": "28d3162e-5aa5-11f0-9135-76adfd113985",
+            "tournament_id": 0,
+            "name": "SKCalalas SA",
+            "players": [
+                {
+                    "name": "SKC|Rhz",
+                    "gamerTag": "#89PVJG9R0"
+                },
+                {
+                    "name": "SKC|Kr",
+                    "gamerTag": "#PR0P8QVQ"
+                },
+                {
+                    "name": "SKC|Prozy",
+                    "gamerTag": "#GYCYCLRJL"
+                }
+            ],
+            "img": "https://raw.githubusercontent.com/idouab/bsc-2025-raw/main/logos/SKCalalas SA.png"
+        }
+    ]
+}
