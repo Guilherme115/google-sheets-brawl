@@ -1,0 +1,19 @@
+{
+  "participants": [
+    {
+      "name": "Time Existente",
+      "players": [
+        { "name": "Jogador Antigo", "gamerTag": "#EXISTING_TAG" },
+        { "name": "Jogador Novo Deste Time", "gamerTag": "#NEW_TAG_1" }
+      ],
+      "img": "url_logo_existente"
+    },
+    {
+      "name": "Nova Equipe",
+      "players": [
+        { "name": "Jogador Novo Desta Equipe", "gamerTag": "#NEW_TAG_2" }
+      ],
+      "img": "url_logo_nova"
+    }
+  ]
+}
