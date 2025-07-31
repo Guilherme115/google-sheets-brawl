@@ -1,153 +1,182 @@
 package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.service;
 
 import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.dto.BattleLogReceiveDTO;
-import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.dto.TeamWithPlayersRelationDTO;
 import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model.*;
 import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.repository.*;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class BrawlDataService {
 
     private final PlayerRepository playerRepository;
     private final BrawlerRepository brawlerRepository;
     private final BattleMatchRepository battleMatchRepository;
-    private final TeamRepository teamRepository;
-    private final PlayerPerfomanceRepository playerPerformanceRepository;
-
-
-    public BrawlDataService(
-            PlayerRepository playerRepository,
-            BrawlerRepository brawlerRepository,
-            BattleMatchRepository battleMatchRepository,
-            TeamRepository teamRepository,
-            PlayerPerfomanceRepository playerPerformanceRepository) {
-        this.playerRepository = playerRepository;
-        this.brawlerRepository = brawlerRepository;
-        this.battleMatchRepository = battleMatchRepository;
-        this.teamRepository = teamRepository;
-        this.playerPerformanceRepository = playerPerformanceRepository;
-    }
 
     @Transactional
-    public void processAndSaveBattleLog(BattleLogReceiveDTO battleLogDTO, TeamWithPlayersRelationDTO teamInfo) {
+    public void processAndSaveBattleLog(BattleLogReceiveDTO battleLogDTO, Map<String, TeamRegisterMODEL> playerTagToTeamMap) {
         if (battleLogDTO == null || battleLogDTO.getItems() == null || battleLogDTO.getItems().isEmpty()) {
-            log.warn("Nenhum log de batalha para processar.");
+            return;
+        }
+        log.info("Iniciando o salvamento de {} batalhas filtradas.", battleLogDTO.getItems().size());
+
+        List<String> allIncomingBattleTimes = battleLogDTO.getItems().stream().map(BattleLogReceiveDTO.BattleLogInfo::getBattleTime).toList();
+        Set<String> existingBattleTimes = battleMatchRepository.findExistingBattleTimes(allIncomingBattleTimes);
+        List<BattleLogReceiveDTO.BattleLogInfo> newBattlesToProcess = battleLogDTO.getItems().stream()
+                .filter(info -> !existingBattleTimes.contains(info.getBattleTime()))
+                .toList();
+
+        if (newBattlesToProcess.isEmpty()) {
+            log.info("Todas as batalhas recebidas já existem no banco de dados.");
             return;
         }
 
-        log.info("Iniciando processamento de {} batalhas para a equipe '{}'.", battleLogDTO.getItems().size(), teamInfo.getTeamName());
+        Map<String, PlayerMODEL> playerCache = findAndCreatePlayersInBatch(newBattlesToProcess);
+        Map<String, BrawlerMODEL> brawlerCache = findAndCreateBrawlersInBatch(newBattlesToProcess);
 
-        Set<String> allPlayerTags = battleLogDTO.getItems().stream()
-                .flatMap(info -> info.getBattle().getTeams().stream())
-                .flatMap(List::stream)
-                .map(player -> player.getTag().replace("#", ""))
-                .collect(Collectors.toSet());
+        List<BattleMatch> battlesToSave = new ArrayList<>();
+        for (BattleLogReceiveDTO.BattleLogInfo battleInfo : newBattlesToProcess) {
+            BattleMatch battleMatch = createBattleMatchEntity(battleInfo);
 
-        Set<String> allBrawlerNames = battleLogDTO.getItems().stream()
-                .flatMap(info -> info.getBattle().getTeams().stream())
-                .flatMap(List::stream)
-                .map(player -> player.getBrawler().getName())
-                .collect(Collectors.toSet());
-
-        Map<String, PlayerMODEL> existingPlayers = playerRepository.findAllById(allPlayerTags).stream()
-                .collect(Collectors.toMap(PlayerMODEL::getTag, Function.identity()));
-        Map<String, BrawlerMODEL> existingBrawlers = brawlerRepository.findAllById(allBrawlerNames).stream()
-                .collect(Collectors.toMap(BrawlerMODEL::getName, Function.identity()));
-        log.info("Buscados {} jogadores e {} brawlers existentes do banco de dados.", existingPlayers.size(), existingBrawlers.size());
-
-        final Set<String> ourTeamRegisteredTags = teamInfo.getPlayersTags().stream()
-                .map(tag -> tag.replace("#", ""))
-                .collect(Collectors.toSet());
-
-        for (BattleLogReceiveDTO.BattleLogInfo battleInfo : battleLogDTO.getItems()) {
-            String battleTime = battleInfo.getBattleTime();
-            if (battleMatchRepository.existsByBattleTime(battleTime)) {
-                log.info("Batalha com o battleTime {} já existe no banco. Pulando.", battleTime);
-                continue;
-            }
-
-            BattleMatch battleMatch = createAndSaveBattleMatch(battleInfo);
-
+            List<MatchTeamMODEL> teamsInThisBattle = new ArrayList<>();
             for (List<BattleLogReceiveDTO.Player> teamData : battleInfo.getBattle().getTeams()) {
-                TeamMODEL teamToSave = new TeamMODEL();
+                MatchTeamMODEL matchTeam = createMatchTeamEntity(teamData, playerTagToTeamMap, playerCache, brawlerCache, battleMatch);
+                teamsInThisBattle.add(matchTeam);
+            }
+            battleMatch.setTeams(teamsInThisBattle);
+            battlesToSave.add(battleMatch);
+        }
 
-                boolean isMyTeam = teamData.stream()
-                        .anyMatch(p -> ourTeamRegisteredTags.contains(p.getTag().replace("#", "")));
+        battleMatchRepository.saveAll(battlesToSave);
+        log.info("Salvas com sucesso {} novas batalhas.", battlesToSave.size());
+    }
 
-                teamToSave.setTeamType(isMyTeam ? TeamType.MY_TEAM : TeamType.ENEMY_TEAM);
-                if (isMyTeam) {
-                    teamToSave.setNameTeam(teamInfo.getTeamName());
-                } else {
-                    teamToSave.setNameTeam("Oponente");
-                }
+    private MatchTeamMODEL createMatchTeamEntity(List<BattleLogReceiveDTO.Player> teamData,
+                                                 Map<String, TeamRegisterMODEL> playerTagToTeamMap,
+                                                 Map<String, PlayerMODEL> playerCache,
+                                                 Map<String, BrawlerMODEL> brawlerCache,
+                                                 BattleMatch battleMatch) {
+        MatchTeamMODEL matchTeam = new MatchTeamMODEL();
+        TeamRegisterMODEL identifiedTeam = null;
 
-                final TeamMODEL savedTeam = teamRepository.save(teamToSave);
-
-                savedTeam.getBattles().add(battleMatch);
-
-                List<PlayerPerformanceMODEL> performances = teamData.stream()
-                        .map(playerData -> createPlayerPerformance(playerData, savedTeam, existingPlayers, existingBrawlers))
-                        .collect(Collectors.toList());
-
-                playerPerformanceRepository.saveAll(performances);
+        // Procura por qualquer jogador desta escalação no nosso mapa de times rastreados
+        for (BattleLogReceiveDTO.Player player : teamData) {
+            String cleanTag = player.getTag().replace("#", "");
+            if (playerTagToTeamMap.containsKey(cleanTag)) {
+                identifiedTeam = playerTagToTeamMap.get(cleanTag);
+                break; // Encontramos o time, não precisa procurar mais
             }
         }
-        log.info("Processadas e salvas com sucesso {} batalhas.", battleLogDTO.getItems().size());
+
+        if (identifiedTeam != null) {
+            // Se encontramos o time no mapa, ele é um time RASTREADO. Usamos seu nome oficial.
+            matchTeam.setNameTeam(identifiedTeam.getName());
+            matchTeam.setTeamType(TeamType.TRACKED);
+        } else {
+            // Se não, é um time desconhecido.
+            matchTeam.setNameTeam("Unknown");
+            matchTeam.setTeamType(TeamType.UNKNOWN);
+        }
+
+        matchTeam.setBattle(battleMatch);
+
+        List<PlayerPerformanceMODEL> performances = teamData.stream()
+                .map(playerData -> createPlayerPerformance(playerData, matchTeam, playerCache, brawlerCache))
+                .collect(Collectors.toList());
+        matchTeam.setPlayers(performances);
+        return matchTeam;
     }
 
-    private PlayerMODEL findOrCreatePlayer(String tag, String name, Map<String, PlayerMODEL> cache) {
-        String cleanedTag = tag.replace("#", "");
-        return cache.computeIfAbsent(cleanedTag, t -> {
-            log.debug("Criando novo jogador no banco: {}", cleanedTag);
-            PlayerMODEL newPlayer = new PlayerMODEL();
-            newPlayer.setTag(cleanedTag);
-            newPlayer.setName(name);
-            return playerRepository.save(newPlayer);
-        });
+    // O resto da classe (findAndCreatePlayersInBatch, etc.) continua igual...
+    private PlayerPerformanceMODEL createPlayerPerformance(BattleLogReceiveDTO.Player playerData, MatchTeamMODEL matchTeam, Map<String, PlayerMODEL> playerCache, Map<String, BrawlerMODEL> brawlerCache) {
+        String cleanedTag = playerData.getTag().replace("#", "");
+        PlayerMODEL player = playerCache.get(cleanedTag);
+        BrawlerMODEL brawler = brawlerCache.get(playerData.getBrawler().getName());
+
+        PlayerPerformanceMODEL performance = new PlayerPerformanceMODEL();
+        performance.setTeam(matchTeam);
+        performance.setPlayer(player);
+        performance.setBrawler(brawler);
+        return performance;
     }
 
-    private BrawlerMODEL findOrCreateBrawler(String name, Map<String, BrawlerMODEL> cache) {
-        return cache.computeIfAbsent(name, n -> {
-            log.debug("Criando novo brawler no banco: {}", name);
-            BrawlerMODEL newBrawler = new BrawlerMODEL();
-            newBrawler.setName(name);
-            return brawlerRepository.save(newBrawler);
-        });
-    }
-
-    private BattleMatch createAndSaveBattleMatch(BattleLogReceiveDTO.BattleLogInfo info) {
+    private BattleMatch createBattleMatchEntity(BattleLogReceiveDTO.BattleLogInfo info) {
         BattleMatch battleMatch = new BattleMatch();
         battleMatch.setBattleTime(info.getBattleTime());
         battleMatch.setMode(info.getBattle().getMode());
         battleMatch.setType(info.getBattle().getType());
         battleMatch.setResult(info.getBattle().getResult());
         battleMatch.setDuration(info.getBattle().getDuration());
-        return battleMatchRepository.save(battleMatch);
+        return battleMatch;
     }
 
-    private PlayerPerformanceMODEL createPlayerPerformance(BattleLogReceiveDTO.Player playerData,
-                                                           TeamMODEL team,
-                                                           Map<String, PlayerMODEL> playerCache,
-                                                           Map<String, BrawlerMODEL> brawlerCache) {
+    private Stream<BattleLogReceiveDTO.Player> streamAllPlayers(List<BattleLogReceiveDTO.BattleLogInfo> battles) {
+        return battles.stream()
+                .map(BattleLogReceiveDTO.BattleLogInfo::getBattle)
+                .filter(Objects::nonNull)
+                .map(BattleLogReceiveDTO.Battle::getTeams)
+                .filter(Objects::nonNull)
+                .flatMap(List::stream)
+                .flatMap(List::stream);
+    }
 
-        PlayerMODEL player = findOrCreatePlayer(playerData.getTag(), playerData.getName(), playerCache);
-        BrawlerMODEL brawler = findOrCreateBrawler(playerData.getBrawler().getName(), brawlerCache);
+    private Map<String, PlayerMODEL> findAndCreatePlayersInBatch(List<BattleLogReceiveDTO.BattleLogInfo> newBattles) {
+        Set<String> allPlayerTags = streamAllPlayers(newBattles)
+                .map(p -> p.getTag().replace("#", ""))
+                .collect(Collectors.toSet());
 
-        PlayerPerformanceMODEL performance = new PlayerPerformanceMODEL();
-        performance.setTeam(team);
-        performance.setPlayer(player);
-        performance.setBrawler(brawler);
-        return performance;
+        Map<String, PlayerMODEL> existingPlayers = playerRepository.findAllById(allPlayerTags).stream()
+                .collect(Collectors.toMap(PlayerMODEL::getTag, Function.identity()));
+
+        List<PlayerMODEL> newPlayersToSave = streamAllPlayers(newBattles)
+                .filter(pDTO -> !existingPlayers.containsKey(pDTO.getTag().replace("#", "")))
+                .collect(Collectors.toMap(p -> p.getTag().replace("#", ""), Function.identity(), (p1, p2) -> p1))
+                .values().stream()
+                .map(pDTO -> {
+                    PlayerMODEL newPlayer = new PlayerMODEL();
+                    newPlayer.setTag(pDTO.getTag().replace("#", ""));
+                    newPlayer.setName(pDTO.getName());
+                    return newPlayer;
+                }).toList();
+
+        if (!newPlayersToSave.isEmpty()) {
+            playerRepository.saveAll(newPlayersToSave);
+            log.info("Criados {} novos jogadores no banco.", newPlayersToSave.size());
+            newPlayersToSave.forEach(p -> existingPlayers.put(p.getTag(), p));
+        }
+        return existingPlayers;
+    }
+
+    private Map<String, BrawlerMODEL> findAndCreateBrawlersInBatch(List<BattleLogReceiveDTO.BattleLogInfo> newBattles) {
+        Set<String> allBrawlerNames = streamAllPlayers(newBattles)
+                .map(p -> p.getBrawler().getName())
+                .collect(Collectors.toSet());
+
+        Map<String, BrawlerMODEL> existingBrawlers = brawlerRepository.findAllById(allBrawlerNames).stream()
+                .collect(Collectors.toMap(BrawlerMODEL::getName, Function.identity()));
+
+        List<BrawlerMODEL> newBrawlersToSave = allBrawlerNames.stream()
+                .filter(name -> !existingBrawlers.containsKey(name))
+                .map(name -> {
+                    BrawlerMODEL newBrawler = new BrawlerMODEL();
+                    newBrawler.setName(name);
+                    return newBrawler;
+                }).toList();
+
+        if (!newBrawlersToSave.isEmpty()) {
+            brawlerRepository.saveAll(newBrawlersToSave);
+            log.info("Criados {} novos brawlers no banco.", newBrawlersToSave.size());
+            newBrawlersToSave.forEach(b -> existingBrawlers.put(b.getName(), b));
+        }
+        return existingBrawlers;
     }
 }
