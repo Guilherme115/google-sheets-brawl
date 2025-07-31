@@ -22,11 +22,7 @@ public class BattleMatch {
         private String result;
         private int duration;
 
-        @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-        @JoinTable(
-                name = "battle_teams",
-                joinColumns = @JoinColumn(name = "battle_match_id"), // Coluna que referencia BattleMatch
-                inverseJoinColumns = @JoinColumn(name = "team_model_id") // Coluna que referencia TeamMODEL
-        )
-        private List<TeamMODEL> teams = new ArrayList<>();
+        // RELAÇÃO CORRIGIDA: Uma partida tem muitos times (escalações)
+        @OneToMany(mappedBy = "battle", cascade = CascadeType.ALL, orphanRemoval = true)
+        private List<MatchTeamMODEL> teams = new ArrayList<>();
 }
