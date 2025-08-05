@@ -1,0 +1,243 @@
+{
+    "participant": [
+        {
+            "id": "f97a8f28-5a96-11f0-a6ff-a2dba56828cf",
+            "tournament_id": 0,
+            "name": "SK Gaming",
+            "players": [
+                {
+                    "name": "SK|Joker",
+                    "gamerTag": "#9JCG0VY8U"
+                },
+                {
+                    "name": "SK|Ope",
+                    "gamerTag": "#9LVUC2PY"
+                },
+                {
+                    "name": "SK|YoshiVGX",
+                    "gamerTag": "#CJV2PJ0R"
+                }
+            ],
+            "img": "https://raw.githubusercontent.com/idouab/bsc-2025-raw/main/logos/SK Gaming.png"
+        },
+        {
+            "id": "bc45cfa2-3bef-11f0-95b4-6eac04d6613b",
+            "tournament_id": 0,
+            "name": "Papara SuperMassive",
+            "players": [
+                {
+                    "name": "SUP|Tomzy",
+                    "gamerTag": "#2YYJYPCL"
+                },
+                {
+                    "name": "SUP|Filippo",
+                    "gamerTag": "#9PQQ8GQQ"
+                },
+                {
+                    "name": "SUP|Salty",
+                    "gamerTag": "#PLV89CGP"
+                }
+            ],
+            "img": "https://raw.githubusercontent.com/idouab/bsc-2025-raw/main/logos/Papara SuperMassive.png"
+        },
+        {
+            "id": "f978a4f6-5a96-11f0-855d-a2dba56828cf",
+            "tournament_id": 0,
+            "name": "KDS Esports",
+            "players": [
+                {
+                    "name": "KDS|치로🩵",
+                    "gamerTag": "#2RR2RU8UL"
+                },
+                {
+                    "name": "KDS|Remica",
+                    "gamerTag": "#Y8PLP8VY"
+                },
+                {
+                    "name": "KDS|Decaii",
+                    "gamerTag": "#2Y822YJYJC"
+                }
+            ],
+            "img": "https://raw.githubusercontent.com/idouab/bsc-2025-raw/main/logos/KDS Esports.png"
+        },
+        {
+            "id": "da4b6700-521a-11f0-9b32-de3adb5e464d",
+            "tournament_id": 0,
+            "name": "Reverso Gaming",
+            "players": [
+                {
+                    "name": "Ness🏒",
+                    "gamerTag": "#Q808R2CV"
+                },
+                {
+                    "name": "Alann🏒",
+                    "gamerTag": "#2288RRJJG"
+                },
+                {
+                    "name": "Yokoo🏒",
+                    "gamerTag": "#29VRJU08C"
+                }
+            ],
+            "img": "https://raw.githubusercontent.com/idouab/bsc-2025-raw/main/logos/Reverso Gaming.png"
+        },
+        {
+            "id": "da4b1e94-521a-11f0-b2ee-de3adb5e464d",
+            "tournament_id": 0,
+            "name": "XPERION NXT",
+            "players": [
+                {
+                    "name": "NXT|Arthur 🩵",
+                    "gamerTag": "#9RVPL0Q0P"
+                },
+                {
+                    "name": "NXT|amos💚",
+                    "gamerTag": "#R0VQ82GU"
+                },
+                {
+                    "name": "NXT|Rup🤍",
+                    "gamerTag": "#88Y8UGPG"
+                }
+            ],
+            "img": "https://raw.githubusercontent.com/idouab/bsc-2025-raw/main/logos/XPERION NXT.png"
+        },
+        {
+            "id": "bc4769c0-3bef-11f0-964a-6eac04d6613b",
+            "tournament_id": 0,
+            "name": "FUT Esports",
+            "players": [
+                {
+                    "name": "FUT|GeRo",
+                    "gamerTag": "#2VJCCCQGP"
+                },
+                {
+                    "name": "FUT|Nowy297",
+                    "gamerTag": "#22CL00PG0"
+                },
+                {
+                    "name": "FUT|MeOw",
+                    "gamerTag": "#90JCYPQU"
+                }
+            ],
+            "img": "https://raw.githubusercontent.com/idouab/bsc-2025-raw/main/logos/FUT Esports.webp"
+        },
+        {
+            "id": "f97837f0-5a96-11f0-8bfa-a2dba56828cf",
+            "tournament_id": 0,
+            "name": "XPERION NXT",
+            "players": [
+                {
+                    "name": "NXT|Arthur",
+                    "gamerTag": "#9RVPL0Q0P"
+                },
+                {
+                    "name": "NXT|amos💚",
+                    "gamerTag": "#R0VQ82GU"
+                },
+                {
+                    "name": "NXT|Rup",
+                    "gamerTag": "#88Y8UGPG"
+                }
+            ],
+            "img": "https://raw.githubusercontent.com/idouab/bsc-2025-raw/main/logos/XPERION NXT.png"
+        },
+        {
+            "id": "f97a38e8-5a96-11f0-b02f-a2dba56828cf",
+            "tournament_id": 0,
+            "name": "NOVO Esports",
+            "players": [
+                {
+                    "name": "NOVO|Marco",
+                    "gamerTag": "#Q22ULY9JY"
+                },
+                {
+                    "name": "NOVO|Subeme",
+                    "gamerTag": "#2JQU8JQ2G"
+                },
+                {
+                    "name": "NOVO|Biso",
+                    "gamerTag": "#90CUVVL2R"
+                }
+            ],
+            "img": "https://raw.githubusercontent.com/idouab/bsc-2025-raw/main/logos/NOVO Esports.png"
+        },
+        {
+            "id": "f97919a4-5a96-11f0-b3a8-a2dba56828cf",
+            "tournament_id": 0,
+            "name": "Team Heretics",
+            "players": [
+                {
+                    "name": "TH|iKaoss",
+                    "gamerTag": "#PCPRPJV"
+                },
+                {
+                    "name": "TH|Zhar",
+                    "gamerTag": "#2JLVRQ9"
+                },
+                {
+                    "name": "TH|LeNain",
+                    "gamerTag": "#20L88L2J"
+                }
+            ],
+            "img": "https://raw.githubusercontent.com/idouab/bsc-2025-raw/main/logos/Team Heretics.png"
+        },
+        {
+            "id": "f97975ca-5a96-11f0-9d3d-a2dba56828cf",
+            "tournament_id": 0,
+            "name": "Reply Totem",
+            "players": [
+                {
+                    "name": "TTM|Angelboy",
+                    "gamerTag": "#9PCV9L982"
+                },
+                {
+                    "name": "TTM|Maru",
+                    "gamerTag": "#2Q892QVU"
+                },
+                {
+                    "name": "TTM|Maury",
+                    "gamerTag": "#82RGU8PR"
+                }
+            ],
+            "img": "https://raw.githubusercontent.com/idouab/bsc-2025-raw/main/logos/Reply Totem.png"
+        },
+        {
+            "id": "f979d1aa-5a96-11f0-8015-a2dba56828cf",
+            "tournament_id": 0,
+            "name": "HMBLE",
+            "players": [
+                {
+                    "name": "HMB|Symantec",
+                    "gamerTag": "#YQUCCJ2"
+                },
+                {
+                    "name": "HMB|BosS",
+                    "gamerTag": "#V89Y2GP0"
+                },
+                {
+                    "name": "HMB|Lukii",
+                    "gamerTag": "#8V92UYCJ"
+                }
+            ],
+            "img": "https://raw.githubusercontent.com/idouab/bsc-2025-raw/main/logos/HMBLE.png"
+        },
+        {
+            "id": "f9777158-5a96-11f0-bd25-a2dba56828cf",
+            "tournament_id": 0,
+            "name": "Inner Circle",
+            "players": [
+                {
+                    "name": "IC|Mebius",
+                    "gamerTag": "#2L08U08RUQ"
+                },
+                {
+                    "name": "IC|Nob",
+                    "gamerTag": "#P2808PRC"
+                },
+                {
+                    "name": "IC|RamaZR",
+                    "gamerTag": "#J2L2C0RJ"
+                }
+            ],
+            "img": "https://raw.githubusercontent.com/idouab/bsc-2025-raw/main/logos/Inner Circle.png"
+        }
+    ]}

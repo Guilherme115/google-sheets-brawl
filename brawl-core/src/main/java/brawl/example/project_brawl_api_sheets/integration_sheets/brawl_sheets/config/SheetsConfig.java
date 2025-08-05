@@ -9,12 +9,14 @@ import com.google.api.services.sheets.v4.SheetsScopes;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
 @Configuration
+@Profile("!test")
 public class SheetsConfig {
     private static final String APPLICATION_NAME = "Planilha do Capeta";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();

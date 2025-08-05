@@ -2,7 +2,7 @@ package brawl.example.project_brawl_api_sheets.integration_sheets.bot_discord.co
 
 ;
 import brawl.example.project_brawl_api_sheets.integration_sheets.bot_discord.view.AnalysisEmbedService;
-import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_analysis.dto.GeneralTeamInfo;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_analysis.dto.brawler.GeneralTeamInfo;
 import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_analysis.service.AnalysisService;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;

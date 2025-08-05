@@ -13,7 +13,7 @@ import java.util.List;
 public class BrawlerMODEL {
 
     @Id
-    private String name; // O nome é o identificador único.
+    private String name;
 
     @OneToMany(mappedBy = "brawler", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PlayerPerformanceMODEL> performances = new ArrayList<>();

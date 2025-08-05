@@ -1,0 +1,77 @@
+{
+  "items": [
+    {
+      "battleTime": "T1_VALID_FRIENDLY",
+      "battle": {
+        "mode": "brawlBall",
+        "type": "friendly",
+        "teams": [
+          [
+            { "tag": "#TEAM_TAG_1", "name": "PlayerA", "brawler": { "name": "SHELLY" } },
+            { "tag": "#TEAM_TAG_2", "name": "PlayerB", "brawler": { "name": "COLT" } }
+          ],
+          [
+            { "tag": "#ENEMY_1", "name": "Enemy1", "brawler": { "name": "SPIKE" } }
+          ]
+        ]
+      }
+    },
+    {
+      "battleTime": "T2_VALID_TOURNAMENT",
+      "battle": {
+        "mode": "knockout",
+        "type": "tournament",
+        "teams": [
+          [
+            { "tag": "#ENEMY_2", "name": "Enemy2", "brawler": { "name": "CROW" } }
+          ],
+          [
+            { "tag": "#TEAM_TAG_1", "name": "PlayerA", "brawler": { "name": "POCO" } },
+            { "tag": "#TEAM_TAG_2", "name": "PlayerB", "brawler": { "name": "JESSIE" } },
+            { "tag": "#TEAM_TAG_3", "name": "PlayerC", "brawler": { "name": "NITA" } }
+          ]
+        ]
+      }
+    },
+    {
+      "battleTime": "T3_INVALID_MODE",
+      "battle": {
+        "mode": "soloShowdown",
+        "type": "ranked"
+      }
+    },
+    {
+      "battleTime": "T4_INVALID_TYPE",
+      "battle": {
+        "mode": "gemGrab",
+        "type": "ranked",
+        "teams": [
+          [ { "tag": "#TEAM_TAG_1" }, { "tag": "#TEAM_TAG_2" } ]
+        ]
+      }
+    },
+    {
+      "battleTime": "T5_INVALID_TEAM_SIZE",
+      "battle": {
+        "mode": "heist",
+        "type": "tournament",
+        "teams": [
+          [ { "tag": "#TEAM_TAG_1" } ],
+          [ { "tag": "#ENEMY_3" } ]
+        ]
+      }
+    },
+    {
+      "battleTime": "T6_MALFORMED_BATTLE",
+      "battle": null
+    },
+    {
+      "battleTime": "T7_MALFORMED_TEAMS",
+      "battle": {
+        "mode": "bounty",
+        "type": "friendly",
+        "teams": null
+      }
+    }
+  ]
+}

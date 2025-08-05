@@ -1,18 +1,20 @@
 package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.repository;
 
-import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model.TeamMODEL;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model.TeamRegisterMODEL;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
+
 @Repository
-public interface TeamRepository extends JpaRepository<TeamMODEL,Long> {
+public interface TeamRepository extends JpaRepository<TeamRegisterMODEL, Long> {
 
+    // Busca um time pelo nome (usado no DataSeeder e AnalysisService)
+    Optional<TeamRegisterMODEL> findByName(String name);
 
-    @Query("SELECT t FROM TeamMODEL t LEFT JOIN FETCH t.battles WHERE t.nameTeam = :teamName")
-    Optional<TeamMODEL> findByNameTeamWithBattles(@Param("teamName") String teamName);
+    // Verifica se um time com um nome já existe (usado no RegistrationService)
+    boolean existsByName(String name);
+    List<TeamRegisterMODEL> findAllByNameIn(List<String> names);
+
 }
-
-
