@@ -28,6 +28,7 @@ public class BattleLogReceiveDTO {
         private String mode;
         private String type;
         private String result;
+        private String map;
         private int duration;
         private List<List<Player>> teams;
 
