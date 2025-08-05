@@ -9,7 +9,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "teams") // Tabela para os times permanentes
+@Table(name = "teams")
 public class TeamRegisterMODEL {
 
     @Id

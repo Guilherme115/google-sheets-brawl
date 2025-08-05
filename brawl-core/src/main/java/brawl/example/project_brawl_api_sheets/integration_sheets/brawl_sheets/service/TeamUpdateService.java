@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -17,7 +18,8 @@ import java.util.Map;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class TeamUpdateService { // <-- NOME MUDOU
+@Profile("!test")
+public class TeamUpdateService {
 
     private final ResourceLoader resourceLoader;
     private final ObjectMapper objectMapper;
@@ -31,8 +33,7 @@ public class TeamUpdateService { // <-- NOME MUDOU
             Region.EA, "data/EAMFs.json"
     );
 
-    // --- MUDANÇA PRINCIPAL: Deixou de ser CommandLineRunner e virou uma tarefa agendada ---
-    @Scheduled(fixedRate = 86400000) // Roda uma vez a cada 24 horas
+    @Scheduled(fixedRate = 86400000)
     @Transactional
     public void updateTeamsFromSource() { // <-- Nome do método mudou
         log.info("------------------- INICIANDO ROTINA DE ATUALIZAÇÃO DE TIMES -------------------");
@@ -65,12 +66,9 @@ public class TeamUpdateService { // <-- NOME MUDOU
         teamRegisterRepository.findByName(participantDTO.getName())
                 .ifPresentOrElse(
                         (existingTeam) -> {
-                            // Opcional: Você poderia adicionar uma lógica aqui para atualizar o logo ou os players se quisesse.
-                            // Por enquanto, apenas logamos que o time já existe.
                             log.trace("Time '{}' já existe no banco de dados. Pulando.", existingTeam.getName());
                         },
                         () -> {
-                            // Se o time não existe, criamos um novo.
                             log.info("Novo time competitivo descoberto: {}", participantDTO.getName());
                             TeamRegisterMODEL newTeam = new TeamRegisterMODEL();
                             newTeam.setName(participantDTO.getName());

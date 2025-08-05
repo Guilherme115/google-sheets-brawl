@@ -4,6 +4,7 @@ import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.mo
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -14,4 +15,6 @@ public interface TeamRepository extends JpaRepository<TeamRegisterMODEL, Long> {
 
     // Verifica se um time com um nome já existe (usado no RegistrationService)
     boolean existsByName(String name);
+    List<TeamRegisterMODEL> findAllByNameIn(List<String> names);
+
 }
