@@ -14,13 +14,11 @@ import spock.lang.Subject
 
 class TeamUpdateServiceTest extends Specification {
 
-    // --- Dependências Mockadas ---
     def teamRegisterRepository = Mock(TeamRepository)
     def playerRepository = Mock(PlayerRepository)
     def objectMapper = Mock(ObjectMapper)
     def resourceLoader = Mock(ResourceLoader)
 
-    // --- Classe Sob Teste ---
     @Subject
     def teamUpdateService = new TeamUpdateService(resourceLoader, objectMapper, teamRegisterRepository, playerRepository)
 
@@ -29,7 +27,6 @@ class TeamUpdateServiceTest extends Specification {
         def newPlayerDto = new PlayerDTO(name: "Novo Player", gamerTag: "#NEW_TAG")
         def newTeamDto = new ParticipantDTO(name: "Time Novo", players: [newPlayerDto])
 
-        // Simula que o banco não encontrou nada
         teamRegisterRepository.findByName("Time Novo") >> Optional.empty()
         playerRepository.findById("NEW_TAG") >> Optional.empty()
 
