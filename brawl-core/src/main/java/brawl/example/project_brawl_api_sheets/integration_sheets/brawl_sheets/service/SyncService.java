@@ -38,7 +38,6 @@ public class SyncService {
         }
         log.info("Encontradas {} equipes para processar.", allTeamsFromDb.size());
 
-        // PASSO 1: Criar o "mapa de conhecimento" com todos os jogadores e seus times.
         Map<String, TeamRegisterMODEL> playerTagToTeamMap = new HashMap<>();
         for (TeamRegisterMODEL team : allTeamsFromDb) {
             for (PlayerMODEL player : team.getPlayers()) {
@@ -77,7 +76,6 @@ public class SyncService {
             BattleLogReceiveDTO battleLogToSave = new BattleLogReceiveDTO();
             battleLogToSave.setItems(trulyNewBattles);
 
-            // PASSO 2: Enviar o log para salvar junto com o "mapa de conhecimento".
             brawlDataService.processAndSaveBattleLog(battleLogToSave, playerTagToTeamMap);
         }
         log.info("------------------- FIM DA ROTINA DE SINCRONIZAÇÃO DE BATALHAS -------------------");
