@@ -1,7 +1,7 @@
 package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.service;
 
 import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.model.*;
-import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.repository.BattleMatchRepository;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.repository.MatchSetRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,8 +10,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -21,70 +22,77 @@ import java.util.List;
 public class SheetExportService {
 
     private final GoogleSheetsService googleSheetsService;
-    private final BattleMatchRepository battleMatchRepository;
-    private String lastProcessedBattleTime = "2020-01-01T00:00:00.000Z";
+    private final MatchSetRepository matchSetRepository;
+    private LocalDateTime lastProcessedSetTime = LocalDateTime.parse("2020-01-01T00:00:00");
 
     @Async
     @Scheduled(initialDelay = 120000, fixedDelay = 300000)
     @Transactional
-    public void exportNewBattlesToSheet() {
-        log.info("--- INICIANDO EXPORTAÇÃO PARA GOOGLE SHEETS ---");
+    public void exportNewSetsToSheet() {
+        log.info("--- INICIANDO EXPORTAÇÃO DE SETS PARA GOOGLE SHEETS ---");
         try {
             googleSheetsService.ensureHeaderExists();
 
-            List<BattleMatch> newBattles = battleMatchRepository.findByBattleTimeGreaterThanOrderByBattleTimeAsc(lastProcessedBattleTime);
+            List<MatchSet> newSets = matchSetRepository.findBySetStartTimeGreaterThanOrderBySetStartTimeAsc(lastProcessedSetTime);
 
-            if (newBattles.isEmpty()) {
-                log.info("Nenhuma batalha nova encontrada no banco para exportar.");
+            if (newSets.isEmpty()) {
+                log.info("Nenhum novo set encontrado no banco para exportar.");
                 return;
             }
-            log.info("Encontradas {} novas batalhas para exportar para a planilha.", newBattles.size());
+            log.info("Encontrados {} novos sets para exportar para a planilha.", newSets.size());
 
-            List<List<Object>> sheetRows = transformBattlesToSheetRows(newBattles);
+            List<List<Object>> sheetRows = transformSetsToSheetRows(newSets);
             googleSheetsService.appendDataToSheet(sheetRows);
 
-            if (!newBattles.isEmpty()) {
-                lastProcessedBattleTime = newBattles.get(newBattles.size() - 1).getBattleTime();
-                log.info("Exportação para planilha concluída. Última batalha processada: {}", lastProcessedBattleTime);
-            }
+            lastProcessedSetTime = newSets.get(newSets.size() - 1).getSetStartTime();
+            log.info("Exportação de {} sets para planilha concluída. Último set processado: {}", sheetRows.size(), lastProcessedSetTime);
 
         } catch (IOException e) {
-            log.error("Falha de IO ao comunicar com a API do Google Sheets.", e);
+            log.warn("Falha de IO ao comunicar com a API do Google Sheets: {}", e.getMessage());
         } catch (Exception e) {
             log.error("Ocorreu um erro inesperado durante a exportação para a planilha.", e);
         }
     }
 
-    private List<List<Object>> transformBattlesToSheetRows(List<BattleMatch> battles) {
+    private List<List<Object>> transformSetsToSheetRows(List<MatchSet> sets) {
         List<List<Object>> allRows = new ArrayList<>();
-        for (BattleMatch battle : battles) {
-            if (battle.getTeams() == null || battle.getTeams().size() < 2) {
-                continue; // Pula partidas malformadas
-            }
+        for (MatchSet set : sets) {
+            if (set.getBattles() == null || set.getBattles().isEmpty()) continue;
 
-            // Ordena os times para garantir consistência:
-            // 1. Times do tipo TRACKED vêm antes de UNKNOWN.
-            // 2. Se ambos forem iguais, ordena por nome em ordem alfabética.
-            battle.getTeams().sort(Comparator
-                    .comparing(MatchTeamMODEL::getTeamType)
-                    .thenComparing(MatchTeamMODEL::getNameTeam));
+            // Pega a primeira partida do set como referência para os detalhes
+            BattleMatch firstBattle = set.getBattles().stream()
+                    .min(Comparator.comparing(BattleMatch::getBattleTime))
+                    .orElse(null);
 
-            MatchTeamMODEL teamA = battle.getTeams().get(0);
-            MatchTeamMODEL teamB = battle.getTeams().get(1);
+            if (firstBattle == null || firstBattle.getTeams().size() < 2) continue;
+
+            // Ordena os times da primeira partida para garantir consistência
+            firstBattle.getTeams().sort(Comparator.comparing(MatchTeamMODEL::getTeamType).thenComparing(MatchTeamMODEL::getNameTeam));
+            MatchTeamMODEL teamA = firstBattle.getTeams().get(0);
+            MatchTeamMODEL teamB = firstBattle.getTeams().get(1);
 
             List<Object> row = new ArrayList<>();
 
-            // Adiciona os dados na ordem correta do novo cabeçalho
-            row.add(teamA.getNameTeam());   // Equipe A (principal)
-            row.add(teamB.getNameTeam());   // Equipe B (oponente)
-            row.add(battle.getBattleTime());
-            row.add(battle.getMode());
-            row.add(battle.getResult());
-            row.add(battle.getDuration());
+            // Preenche as colunas de resumo do Set
+            row.add(teamA.getNameTeam()); // Team Name
+            row.add(teamB.getNameTeam()); // Opponent Name
+            row.add(set.getSetStartTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))); // Battle Time (do set)
+            row.add(firstBattle.getMode()); // Mode (do primeiro jogo)
 
-            // Adiciona jogadores e brawlers da Equipe A
+            // Lógica para o Result (victory/defeat) baseado no vencedor do SET
+            String finalResult = "draw";
+            if (set.getWinningTeamName().equalsIgnoreCase(teamA.getNameTeam())) {
+                finalResult = "victory";
+            } else if (set.getWinningTeamName().equalsIgnoreCase(teamB.getNameTeam())) {
+                finalResult = "defeat";
+            }
+            row.add(finalResult);
+
+            row.add(firstBattle.getDuration()); // Duration (do primeiro jogo)
+            row.add(set.getFinalResult()); // Scoreboard (ex: "2-1")
+
+            // Preenche os dados dos jogadores e brawlers (do primeiro jogo)
             fillPlayerAndBrawlerData(row, teamA.getPlayers());
-            // Adiciona jogadores e brawlers da Equipe B
             fillPlayerAndBrawlerData(row, teamB.getPlayers());
 
             allRows.add(row);
@@ -93,7 +101,7 @@ public class SheetExportService {
     }
 
     private void fillPlayerAndBrawlerData(List<Object> destinationRow, List<PlayerPerformanceMODEL> performances) {
-        // Ordena os jogadores por nome para manter a consistência na planilha
+        // Ordena para garantir consistência (Player #1, #2, #3)
         performances.sort(Comparator.comparing(p -> p.getPlayer().getName()));
 
         for (int i = 0; i < 3; i++) {
