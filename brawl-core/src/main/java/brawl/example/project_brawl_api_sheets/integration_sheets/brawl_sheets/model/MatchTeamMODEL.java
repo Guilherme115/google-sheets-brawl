@@ -16,12 +16,11 @@ public class MatchTeamMODEL {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nameTeam; // Nome do time na partida (ex: "SUP E-sports" ou "Oponente")
+    private String nameTeam;
 
     @Enumerated(EnumType.STRING)
-    private TeamType teamType; // Se é MY_TEAM ou ENEMY_TEAM
+    private TeamType teamType;
 
-    // RELAÇÃO CORRIGIDA: Uma escalação de time pertence a UMA partida
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "battle_match_id", nullable = false)
     private BattleMatch battle;
