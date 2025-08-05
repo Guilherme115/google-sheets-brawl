@@ -27,21 +27,16 @@ public class GoogleSheetsService {
     }
 
     public void ensureHeaderExists() throws IOException {
-        // O range agora vai de A até X para acomodar a nova coluna
-        String range = "A1:X1";
-        ValueRange response = sheets.spreadsheets().values()
-                .get(spreadsheetId, range)
-                .execute();
-
+        String range = "A1:Z1"; // Um range grande o suficiente para o cabeçalho
+        ValueRange response = sheets.spreadsheets().values().get(spreadsheetId, range).execute();
         List<List<Object>> values = response.getValues();
-        if (values == null || values.isEmpty()) {
-            log.info("Cabeçalho não encontrado na planilha. Criando...");
-            List<List<Object>> headerData = new ArrayList<>();
-            headerData.add(createHeader());
+        List<Object> expectedHeader = createHeader();
 
-            ValueRange body = new ValueRange().setValues(headerData);
-            this.sheets.spreadsheets().values()
-                    .update(spreadsheetId, range, body)
+        if (values == null || values.isEmpty() || !values.get(0).equals(expectedHeader)) {
+            log.info("Cabeçalho diferente ou não encontrado. Criando/Atualizando...");
+            ValueRange body = new ValueRange().setValues(List.of(expectedHeader));
+            sheets.spreadsheets().values()
+                    .update(spreadsheetId, "A1", body)
                     .setValueInputOption("RAW")
                     .execute();
         }
@@ -49,25 +44,21 @@ public class GoogleSheetsService {
 
     public void appendDataToSheet(List<List<Object>> data) throws IOException {
         if (data == null || data.isEmpty()) {
-            log.warn("Nenhum dado para anexar à planilha.");
             return;
         }
-
         String range = "A1";
         ValueRange body = new ValueRange().setValues(data);
-
-        this.sheets.spreadsheets().values()
+        sheets.spreadsheets().values()
                 .append(spreadsheetId, range, body)
                 .setValueInputOption("RAW")
                 .execute();
-
         log.info("{} linhas de dados anexadas à planilha com sucesso.", data.size());
     }
 
+    // --- CABEÇALHO CORRIGIDO E SIMPLIFICADO ---
     private List<Object> createHeader() {
-        // Cabeçalho final com a coluna "Opponent Name"
         return Arrays.asList(
-                "Team Name", "Opponent Name", "Battle Time", "Mode", "Result", "Duration",
+                "Team Name", "Opponent Name", "Battle Time", "Mode", "Result", "Duration", "Scoreboard",
                 "Player #1", "Tag #1", "Brawler #1",
                 "Player #2", "Tag #2", "Brawler #2",
                 "Player #3", "Tag #3", "Brawler #3",

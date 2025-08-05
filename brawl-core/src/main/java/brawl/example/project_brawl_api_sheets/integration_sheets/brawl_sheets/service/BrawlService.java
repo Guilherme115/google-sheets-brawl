@@ -74,7 +74,6 @@ public class BrawlService {
         return filteredList;
     }
 
-    // Métodos privados continuam os mesmos...
 
     private String fetchRawJson(String mainTag) {
         try {

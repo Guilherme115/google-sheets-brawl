@@ -1,6 +1,5 @@
-package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_analysis.dto;
+package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_analysis.dto.brawler;
 
-import lombok.Builder;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
