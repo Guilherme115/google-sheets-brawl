@@ -1,6 +1,6 @@
 package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_analysis.service;
 
-import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_analysis.dto.GeneralTeamInfo;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_analysis.dto.brawler.GeneralTeamInfo;
 import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.repository.BattleMatchRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
