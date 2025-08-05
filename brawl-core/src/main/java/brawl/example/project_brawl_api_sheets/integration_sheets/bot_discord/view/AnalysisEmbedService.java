@@ -1,13 +1,12 @@
 package brawl.example.project_brawl_api_sheets.integration_sheets.bot_discord.view;
 
-import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_analysis.dto.GeneralTeamInfo;
+import brawl.example.project_brawl_api_sheets.integration_sheets.brawl_analysis.dto.brawler.GeneralTeamInfo;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.springframework.stereotype.Service;
 
 import java.awt.Color;
 import java.time.Instant;
-import java.util.Objects;
 
 @Service
 public class AnalysisEmbedService {
