@@ -3,13 +3,11 @@ package brawl.example.project_brawl_api_sheets.integration_sheets.brawl_sheets.m
 import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
 
 @NoArgsConstructor
-@Document(collection = "playersTags")
 @Data
 public class PlayerTagMODEL {
 

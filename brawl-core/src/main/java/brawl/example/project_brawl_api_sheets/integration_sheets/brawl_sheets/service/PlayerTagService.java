@@ -77,7 +77,7 @@ public class PlayerTagService {
         } catch (HttpClientErrorException.NotFound e) {
 
             log.warn("Tag '{}' não encontrada na API do Brawl Stars (404). Considerada inválida.", tag);
-            return false; // A tag é inválida porque não foi encontrada.
+            return false;
 
         } catch (Exception e) {
 
